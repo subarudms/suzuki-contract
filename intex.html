@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>勁順汽車 汽車買賣契約書 - 電子訂單系統</title>
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Google Fonts: Inter 與 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- 引入 Font Awesome 圖示 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background-color: #f1f5f9;
+    }
+
+    /* 手寫簽名畫布樣式 */
+    .sig-canvas-wrapper {
+      position: relative;
+      width: 100%;
+      background-color: #ffffff;
+      border: 2px dashed #94a3b8;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .sig-canvas-wrapper:hover {
+      border-color: #2563eb;
+    }
+    .sig-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* 契約大寫金額方格背景 */
+    .zh-num-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.85rem;
+      height: 1.85rem;
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 0.375rem;
+      color: #1e40af;
+      font-weight: 800;
+      margin: 0 0.15rem;
+      padding: 0 0.25rem;
+    }
+
+    /* 列印與匯出 PDF 專屬樣式 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        padding-bottom: 0 !important;
+        font-size: 11px !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0.5rem !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #64748b !important;
+        border-radius: 0.375rem !important;
+        padding: 0.65rem !important;
+        margin-bottom: 0.5rem !important;
+        break-inside: avoid;
+      }
+      #contractTermsBox {
+        max-height: none !important;
+        overflow: visible !important;
+        background-color: #ffffff !important;
+        border: none !important;
+        padding: 0 !important;
+        font-size: 9.5px !important;
+        line-height: 1.35 !important;
+      }
+      .sig-canvas-wrapper {
+        border: 1px solid #475569 !important;
+      }
+      input, select, textarea {
+        border-color: #94a3b8 !important;
+        background-color: transparent !important;
+      }
+    }
+  </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+  <!-- 頂部浮動通知 Toast -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
+
+  <!-- 自訂確認對話框 Modal (取代原生 confirm/alert) -->
+  <div id="customModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 no-print">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 transform transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+        </div>
+        <h3 id="modalTitle" class="text-lg font-bold text-slate-900">確認操作</h3>
+      </div>
+      <p id="modalMessage" class="text-sm text-slate-600 leading-relaxed mb-6">確定要執行此操作嗎？</p>
+      <div class="flex justify-end gap-2.5">
+        <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+          取消
+        </button>
+        <button type="button" id="modalConfirmBtn" class="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-500 shadow-sm transition">
+          確定執行
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 頂部導覽列 -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-lg no-print">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg tracking-tighter shadow-inner">
+          S
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-xl font-bold tracking-wider">勁順汽車｜汽車買賣電子契約書</h1>
+            <span class="hidden sm:inline-block text-[11px] bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded-full font-medium">
+              SUZUKI 授權經銷商
+            </span>
+          </div>
+          <p class="text-xs text-slate-300">第一聯：客戶聯（支援觸控簽名、車型快速帶入、分所切換與 A4 列印）</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- 頂部快速切換營業所 -->
+        <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl p-1 text-xs">
+          <span class="px-2 text-slate-400 hidden md:inline"><i class="fa-solid fa-location-dot mr-1"></i>營業所：</span>
+          <button type="button" onclick="selectBranch('民族所')" data-branch-btn="民族所" class="branch-tab px-2.5 py-1.5 rounded-lg font-semibold transition">民族所</button>
+          <button type="button" onclick="selectBranch('鳳山所')" data-branch-btn="鳳山所" class="branch-tab px-2.5 py-1.5 rounded-lg font-semibold transition">鳳山所</button>
+          <button type="button" onclick="selectBranch('大中所')" data-branch-btn="大中所" class="branch-tab px-2.5 py-1.5 rounded-lg font-semibold transition">大中所</button>
+          <button type="button" onclick="selectBranch('屏東所')" data-branch-btn="屏東所" class="branch-tab px-2.5 py-1.5 rounded-lg font-semibold transition">屏東所</button>
+        </div>
+
+        <button type="button" onclick="confirmResetForm()" class="px-3 py-2 text-xs sm:text-sm bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-medium transition flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="hidden sm:inline">清空重填</span>
+        </button>
+        <button type="button" onclick="handlePrintContract()" class="px-4 py-2 text-xs sm:text-sm bg-blue-600 hover:bg-blue-500 font-semibold rounded-xl text-white shadow-md transition flex items-center gap-1.5">
+          <i class="fa-solid fa-print"></i>
+          <span>匯出 PDF / 列印</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主體內容容器 -->
+  <main class="max-w-6xl mx-auto p-3 sm:p-6 space-y-5 print-container">
+
+    <!-- 1. 契約書表頭、注意事項與營業所交車資訊 -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 print-card">
+      <div class="flex flex-col lg:flex-row lg:items-start justify-between border-b border-slate-200 pb-4 mb-4 gap-4">
+        <div class="space-y-2 flex-1">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-widest">勁順汽車　汽車買賣契約書</h2>
+            <span class="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg">
+              第一聯：客戶聯
+            </span>
+            <span id="currentBranchBadge" class="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg">
+              目前據點：民族營業所
+            </span>
+          </div>
+
+          <!-- 原版契約右側三點注意事項 -->
+          <div class="text-xs text-amber-900 bg-amber-50/90 border border-amber-200 rounded-xl p-3 space-y-1 leading-relaxed">
+            <div class="font-bold text-amber-800 flex items-center gap-1.5 mb-0.5">
+              <i class="fa-solid fa-circle-info"></i> 契約重要注意事項：
+            </div>
+            <p>1. 本公司不承做舊車換新車業務，即買賣舊車之風險，若有任何糾紛及權益問題，恕無法協助處理。</p>
+            <p>2. 車款敬請以電匯匯入本公司所指定之銀行帳戶（合作金庫中興分行 0500717135027）。</p>
+            <p>3. 開立即期支票者，敬請指名抬頭並禁止背書轉讓。</p>
+          </div>
+        </div>
+
+        <!-- 資料編號 -->
+        <div class="w-full lg:w-64 shrink-0 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <label for="docNo" class="block text-xs font-bold text-slate-600 mb-1">資料編號</label>
+          <div class="flex gap-1.5">
+            <input type="text" id="docNo" placeholder="例：JS-20261117-01" class="w-full border border-slate-300 bg-white rounded-lg px-3 py-2 text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="button" onclick="generateSerialNo()" title="自動產生單號" class="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition no-print">
+              自動
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 營業所連動與交車時間地點 -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+        <div class="md:col-span-3">
+          <label for="branchSelectTop" class="block text-xs font-bold text-slate-700 mb-1">
+            所屬營業所切換 <span class="text-blue-600 font-normal">(自動帶入地址電話)</span>
+          </label>
+          <select id="branchSelectTop" onchange="selectBranch(this.value)" class="w-full border border-blue-300 bg-blue-50/50 rounded-xl px-3 py-2.5 text-sm font-bold text-blue-900 focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="民族所">民族所｜高雄市三民區</option>
+            <option value="鳳山所">鳳山所｜高雄市鳳山區</option>
+            <option value="大中所">大中所｜高雄市左營區</option>
+            <option value="屏東所">屏東所｜屏東縣屏東市</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-3">
+          <label for="deliveryDate" class="block text-xs font-bold text-slate-700 mb-1">交車日</label>
+          <input type="date" id="deliveryDate" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+
+        <div class="md:col-span-6">
+          <div class="flex items-center justify-between mb-1">
+            <label for="deliveryLocation" class="text-xs font-bold text-slate-700">交車地點</label>
+            <div class="flex gap-1.5 text-[11px] no-print">
+              <button type="button" onclick="setDeliveryLocMode('branch')" class="text-blue-600 hover:underline font-medium">設為營業所交車</button>
+              <span class="text-slate-300">|</span>
+              <button type="button" onclick="setDeliveryLocMode('buyer')" class="text-blue-600 hover:underline font-medium">設為買受人地址</button>
+            </div>
+          </div>
+          <input type="text" id="deliveryLocation" placeholder="請輸入營業所或指定交車地點" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 買受人與使用人（連絡人）資料 -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-6 print-card">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-slate-900 border-l-4 border-blue-600 pl-2.5">買受人資料</h3>
+          <span class="text-xs text-slate-500">填寫後自動同步至契約底部買受人簽署欄</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label for="buyerName" class="block text-xs font-semibold text-slate-600 mb-1">買受人姓名 / 公司名稱</label>
+            <input type="text" id="buyerName" oninput="syncFooterBuyer()" placeholder="請輸入買受人全名" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="licenseName" class="block text-xs font-semibold text-slate-600 mb-1">
+              領照名稱
+              <button type="button" onclick="document.getElementById('licenseName').value = document.getElementById('buyerName').value" class="text-[11px] text-blue-600 hover:underline ml-1 no-print">(同買受人)</button>
+            </label>
+            <input type="text" id="licenseName" placeholder="牌照登記名稱" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="buyerId" class="block text-xs font-semibold text-slate-600 mb-1">營利事業或身分證號碼</label>
+            <input type="text" id="buyerId" oninput="syncFooterBuyer()" placeholder="統編或身分證字號" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm uppercase font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="buyerDob" class="block text-xs font-semibold text-slate-600 mb-1">出生年月日</label>
+            <input type="date" id="buyerDob" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="buyerTelHome" class="block text-xs font-semibold text-slate-600 mb-1">電話（宅 / 行動電話）</label>
+            <input type="tel" id="buyerTelHome" oninput="syncFooterBuyer()" placeholder="例：0912-345-678" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="buyerTelWork" class="block text-xs font-semibold text-slate-600 mb-1">電話（公）</label>
+            <input type="tel" id="buyerTelWork" oninput="syncFooterBuyer()" placeholder="公司電話" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div class="sm:col-span-2">
+            <label for="buyerEmail" class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
+            <input type="email" id="buyerEmail" placeholder="example@mail.com" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div class="sm:col-span-2 lg:col-span-4">
+            <label for="buyerAddress" class="block text-xs font-semibold text-slate-600 mb-1">戶籍地址（縣市 / 鄉鎮市區 / 村里鄰 / 路街段巷弄號樓之）</label>
+            <input type="text" id="buyerAddress" oninput="syncFooterBuyer()" placeholder="請填寫完整戶籍地址" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- 使用人（連絡人）資料 -->
+      <div class="pt-4 border-t border-slate-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h3 class="text-base font-bold text-slate-900 border-l-4 border-blue-600 pl-2.5">使用人（連絡人）資料</h3>
+          <button type="button" onclick="copyBuyerToUser()" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold px-3 py-1.5 rounded-xl border border-blue-200 transition flex items-center gap-1.5 no-print">
+            <i class="fa-regular fa-copy"></i> 同買受人資料（一鍵帶入）
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label for="userName" class="block text-xs font-semibold text-slate-600 mb-1">使用人（連絡人）</label>
+            <input type="text" id="userName" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="userTelHome" class="block text-xs font-semibold text-slate-600 mb-1">電話（宅 / 行動電話）</label>
+            <input type="tel" id="userTelHome" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="userTelWork" class="block text-xs font-semibold text-slate-600 mb-1">電話（公）</label>
+            <input type="tel" id="userTelWork" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label for="userFax" class="block text-xs font-semibold text-slate-600 mb-1">FAX 傳真</label>
+            <input type="text" id="userFax" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+          <div class="sm:col-span-2 lg:col-span-4">
+            <label for="userAddress" class="block text-xs font-semibold text-slate-600 mb-1">戶籍／聯絡地址（縣市 / 鄉鎮市區 / 村里鄰 / 路街段巷弄號樓之）</label>
+            <input type="text" id="userAddress" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 訂購車輛規格（含 SUZUKI 全車系快速選單） -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-5 print-card">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="text-base font-bold text-slate-900 border-l-4 border-blue-600 pl-2.5">訂購車輛規格</h3>
+        <span class="text-xs text-slate-500 no-print">可從下方快速選單一鍵帶入車型、排氣量、產地與建議售價，亦可手動微調</span>
+      </div>
+
+      <!-- SUZUKI 全車系快速選單控制面板（列印時隱藏） -->
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-4 space-y-3.5 no-print shadow-inner">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-1 bg-blue-600 text-white text-xs font-extrabold rounded-lg tracking-wider">SUZUKI 全車系快速帶入</span>
+            <span class="text-xs text-slate-300">點選車系或下拉選單，自動填寫規格與建議售價</span>
+          </div>
+          <span id="selectedTrimTag" class="text-xs font-mono text-amber-300 bg-amber-500/10 border border-amber-400/30 px-2.5 py-1 rounded-lg hidden"></span>
+        </div>
+
+        <!-- 車系快速篩選按鈕列 -->
+        <div id="modelFamilyTabs" class="flex flex-wrap gap-1.5">
+          <!-- 由 JS 動態渲染車系按鈕 -->
+        </div>
+
+        <!-- 車型式樣與售價下拉選單 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+          <div class="lg:col-span-8">
+            <select id="suzukiQuickSelect" onchange="applySuzukiModel(this.value)" class="w-full bg-slate-800 border border-slate-600 text-white rounded-xl px-3.5 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-400 outline-none">
+              <option value="">-- 請選擇 SUZUKI 車型 / 式樣 / 排氣量 / 建議售價 --</option>
+            </select>
+          </div>
+          <div class="lg:col-span-4 flex items-center gap-2">
+            <button type="button" onclick="applySelectedModelAgain()" class="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+              <i class="fa-solid fa-bolt"></i> 重新套用建議售價與規格
+            </button>
+          </div>
+        </div>
+
+        <!-- 熱門車色快速點選 -->
+        <div class="pt-2 border-t border-slate-700/80 flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="text-slate-400 mr-1"><i class="fa-solid fa-palette mr-1"></i>常用車色快選：</span>
+          <button type="button" onclick="setQuickColor('極光白')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">極光白</button>
+          <button type="button" onclick="setQuickColor('星際藍')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">星際藍</button>
+          <button type="button" onclick="setQuickColor('動感紅')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">動感紅</button>
+          <button type="button" onclick="setQuickColor('鐵灰')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">鐵灰</button>
+          <button type="button" onclick="setQuickColor('戰術綠')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">戰術綠</button>
+          <button type="button" onclick="setQuickColor('象牙白(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">象牙白(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('星際藍(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">星際藍(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('動感紅(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">動感紅(黑頂雙色)</button>
+        </div>
+      </div>
+
+      <!-- 實際契約車輛規格欄位 -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div>
+          <label for="carModel" class="block text-xs font-semibold text-slate-600 mb-1">車型</label>
+          <input type="text" id="carModel" placeholder="例：SWIFT / VITARA" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carStyle" class="block text-xs font-semibold text-slate-600 mb-1">式樣</label>
+          <input type="text" id="carStyle" placeholder="例：1.2L GLX (單色)" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carCc" class="block text-xs font-semibold text-slate-600 mb-1">排氣量 (c.c.)</label>
+          <input type="number" id="carCc" placeholder="例：1197" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carColor" class="block text-xs font-semibold text-slate-600 mb-1">車色</label>
+          <input type="text" id="carColor" placeholder="請輸入或點選上方車色" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carQty" class="block text-xs font-semibold text-slate-600 mb-1">台數（台）</label>
+          <input type="number" id="carQty" value="1" min="1" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carYear" class="block text-xs font-semibold text-slate-600 mb-1">車型年份 / 出廠年份</label>
+          <input type="text" id="carYear" value="2026 / 2026" placeholder="例：2026 / 2026" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carOrigin" class="block text-xs font-semibold text-slate-600 mb-1">產地</label>
+          <input type="text" id="carOrigin" placeholder="例：日本 / 匈牙利 / 印度" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label for="carEnergy" class="block text-xs font-semibold text-slate-600 mb-1">能源種類</label>
+          <select id="carEnergy" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="油電複合(Hybrid)">油電複合(Hybrid)</option>
+            <option value="汽油">汽油</option>
+            <option value="純電(EV)">純電(EV)</option>
+            <option value="柴油">柴油</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 車輛價格與付款明細 -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-5 print-card">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="text-base font-bold text-slate-900 border-l-4 border-blue-600 pl-2.5">車輛價格與付款明細</h3>
+        <div id="msrpCompareBadge" class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full hidden"></div>
+      </div>
+
+      <!-- 車價與新台幣大寫自動換算 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 items-center">
+        <div class="lg:col-span-5">
+          <div class="flex items-center justify-between mb-1">
+            <label for="vehiclePrice" class="text-xs font-bold text-slate-700">車輛價格（含營業稅，元整）</label>
+            <span class="text-[11px] text-slate-500 no-print">可手動修改成交價</span>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">NT$</span>
+            <input type="number" id="vehiclePrice" oninput="updatePriceCalc()" placeholder="請輸入成交車價" class="w-full border border-blue-300 rounded-xl pl-12 pr-4 py-2.5 text-lg font-black text-blue-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+          </div>
+        </div>
+
+        <div class="lg:col-span-7">
+          <label class="block text-xs font-bold text-slate-700 mb-1">新台幣大寫金額（自動轉換：佰、拾、萬、仟、佰、拾、元整）</label>
+          <div id="chinesePriceDisplay" class="w-full border border-slate-200 bg-white rounded-xl px-3 py-2 text-xs sm:text-sm font-bold text-slate-800 flex flex-wrap items-center leading-loose">
+            <!-- 由 JS 渲染大寫金額格 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 訂金與餘款 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 訂金 -->
+        <div class="border border-slate-200 rounded-xl p-4 space-y-3 bg-white">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label for="depositAmount" class="text-xs font-bold text-slate-800">訂　金（元整）</label>
+            <div class="flex items-center gap-3 text-xs font-medium">
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="depositType" value="現金" checked class="accent-blue-600"> 現金</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="depositType" value="刷卡" class="accent-blue-600"> 刷卡</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="depositType" value="票據" class="accent-blue-600"> 票據</label>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <input type="number" id="depositAmount" oninput="updatePriceCalc()" placeholder="輸入訂金金額" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none">
+            <div class="flex gap-1 shrink-0 no-print">
+              <button type="button" onclick="setQuickDeposit(20000)" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700">2萬</button>
+              <button type="button" onclick="setQuickDeposit(30000)" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700">3萬</button>
+              <button type="button" onclick="setQuickDeposit(50000)" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700">5萬</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-0.5">票號</label>
+              <input type="text" placeholder="選填" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-0.5">付款行庫</label>
+              <input type="text" placeholder="選填" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-500 mb-0.5">帳號</label>
+              <input type="text" placeholder="選填" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs">
+            </div>
+          </div>
+        </div>
+
+        <!-- 餘款 -->
+        <div class="border border-slate-200 rounded-xl p-4 space-y-3 bg-white flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label for="balanceAmount" class="text-xs font-bold text-slate-800">餘　款（自動計算，元整）</label>
+              <div class="flex flex-wrap items-center gap-3 text-xs font-medium">
+                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="balanceType" value="現金支付" checked class="accent-blue-600"> 現金支付</label>
+                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="balanceType" value="分期付款" class="accent-blue-600"> 分期付款(另立附條件買賣合約)</label>
+              </div>
+            </div>
+            <input type="number" id="balanceAmount" readonly class="w-full border border-slate-200 bg-slate-100 rounded-xl px-3 py-2 text-base font-black text-slate-900">
+          </div>
+          <p class="text-xs text-slate-500 flex items-center justify-between pt-1">
+            <span>計算公式：餘款 ＝ 車輛價格 － 訂金</span>
+            <span id="formattedBalanceHint" class="font-mono font-semibold text-blue-700">NT$ 0</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- 頭期款與尾款明細表 -->
+      <div class="overflow-x-auto rounded-xl border border-slate-300">
+        <table class="w-full text-xs border-collapse">
+          <thead class="bg-slate-100 text-slate-700 font-bold">
+            <tr>
+              <th class="border-b border-r border-slate-300 p-2 w-20">摘要</th>
+              <th class="border-b border-r border-slate-300 p-2">付款日期</th>
+              <th class="border-b border-r border-slate-300 p-2">金額 (元)</th>
+              <th class="border-b border-r border-slate-300 p-2">付款方式</th>
+              <th class="border-b border-r border-slate-300 p-2">支票票載日</th>
+              <th class="border-b border-r border-slate-300 p-2">支票號碼</th>
+              <th class="border-b border-r border-slate-300 p-2">付款行庫</th>
+              <th class="border-b border-r border-slate-300 p-2">分行</th>
+              <th class="border-b border-r border-slate-300 p-2">帳號</th>
+              <th class="border-b border-slate-300 p-2 w-20">業代確認</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-slate-300">
+              <td class="border-r border-slate-300 p-2 font-bold text-center bg-slate-50">頭期款</td>
+              <td class="border-r border-slate-300 p-1.5"><input type="date" class="w-full p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="number" placeholder="金額" class="w-24 p-1 border border-slate-200 rounded font-mono"></td>
+              <td class="border-r border-slate-300 p-1.5 text-center whitespace-nowrap">
+                <label class="mr-1.5 inline-flex items-center gap-1"><input type="checkbox" class="accent-blue-600"> 現金</label>
+                <label class="inline-flex items-center gap-1"><input type="checkbox" class="accent-blue-600"> 支票</label>
+              </td>
+              <td class="border-r border-slate-300 p-1.5"><input type="date" class="w-full p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-20 p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-20 p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-16 p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-24 p-1 border border-slate-200 rounded"></td>
+              <td class="p-1.5"><input type="text" class="w-full p-1 border border-slate-200 rounded text-center"></td>
+            </tr>
+            <tr>
+              <td class="border-r border-slate-300 p-2 font-bold text-center bg-slate-50">尾　款</td>
+              <td class="border-r border-slate-300 p-1.5"><input type="date" class="w-full p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="number" placeholder="金額" class="w-24 p-1 border border-slate-200 rounded font-mono"></td>
+              <td class="border-r border-slate-300 p-1.5 text-center whitespace-nowrap">
+                <label class="mr-1.5 inline-flex items-center gap-1"><input type="checkbox" class="accent-blue-600"> 現金</label>
+                <label class="inline-flex items-center gap-1"><input type="checkbox" class="accent-blue-600"> 支票</label>
+              </td>
+              <td class="border-r border-slate-300 p-1.5"><input type="date" class="w-full p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-20 p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-20 p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-16 p-1 border border-slate-200 rounded"></td>
+              <td class="border-r border-slate-300 p-1.5"><input type="text" class="w-24 p-1 border border-slate-200 rounded"></td>
+              <td class="p-1.5"><input type="text" class="w-full p-1 border border-slate-200 rounded text-center"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. 買受人委辦車輛保險事項、配件加裝、其他約定事項 -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- 買受人委辦車輛保險事項 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3.5 print-card">
+        <h3 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-2">買受人委辦車輛保險事項</h3>
+        <div class="space-y-2.5 text-xs">
+          <div class="flex flex-wrap items-center gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-200">
+            <label class="flex items-center gap-1 font-bold text-slate-800"><input type="checkbox" class="accent-blue-600"> 車體險 (</label>
+            <input type="text" placeholder="甲/乙/丙" class="w-14 border border-slate-300 bg-white rounded px-1.5 py-0.5 text-center font-semibold">
+            <span class="font-bold text-slate-800">式) 自負額</span>
+            <input type="number" placeholder="金額" class="w-20 border border-slate-300 bg-white rounded px-1.5 py-0.5 font-mono">
+            <span>元</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5 pt-1">
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 意外險</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 乘客險</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 竊盜險</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 零件險</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 酗酒險</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 颱風險</label>
+            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" class="accent-blue-600"> 其他</label>
+            <label class="flex items-center gap-1.5 cursor-pointer col-span-2 font-semibold text-blue-800"><input type="checkbox" checked class="accent-blue-600"> 強制險</label>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 space-y-2.5">
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">保險費合計（元）</label>
+              <input type="number" placeholder="輸入預估或實際保費合計" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm font-mono">
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-slate-600">入款型態：</span>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="insPayType" value="現金" class="accent-blue-600"> 現金</label>
+                <label class="flex items-center gap-1 cursor-pointer"><input type="radio" name="insPayType" value="支票" class="accent-blue-600"> 支票</label>
+              </div>
+            </div>
+            <div>
+              <label class="block text-slate-600 font-semibold mb-1">入款日期</label>
+              <input type="date" class="w-full border border-slate-300 rounded-xl px-3 py-1.5">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 配件加裝 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col justify-between space-y-3 print-card">
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-2">配件加裝（品名／規格與金額）</h3>
+            <button type="button" onclick="addAccessoryRow()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 no-print flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> 新增列
+            </button>
+          </div>
+          <div id="accessoryList" class="space-y-2 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 text-slate-500 font-mono font-bold">1.</span>
+              <input type="text" placeholder="品名／規格（例：全車隔熱紙）" class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5">
+              <input type="number" placeholder="金額" oninput="calcAccessories()" class="acc-price w-24 border border-slate-300 rounded-lg px-2 py-1.5 text-right font-mono">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 text-slate-500 font-mono font-bold">2.</span>
+              <input type="text" placeholder="品名／規格（例：前後行車記錄器）" class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5">
+              <input type="number" placeholder="金額" oninput="calcAccessories()" class="acc-price w-24 border border-slate-300 rounded-lg px-2 py-1.5 text-right font-mono">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 text-slate-500 font-mono font-bold">3.</span>
+              <input type="text" placeholder="品名／規格（例：防水腳踏墊）" class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5">
+              <input type="number" placeholder="金額" oninput="calcAccessories()" class="acc-price w-24 border border-slate-300 rounded-lg px-2 py-1.5 text-right font-mono">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 text-slate-500 font-mono font-bold">4.</span>
+              <input type="text" placeholder="品名／規格" class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5">
+              <input type="number" placeholder="金額" oninput="calcAccessories()" class="acc-price w-24 border border-slate-300 rounded-lg px-2 py-1.5 text-right font-mono">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 text-slate-500 font-mono font-bold">5.</span>
+              <input type="text" placeholder="品名／規格" class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5">
+              <input type="number" placeholder="金額" oninput="calcAccessories()" class="acc-price w-24 border border-slate-300 rounded-lg px-2 py-1.5 text-right font-mono">
+            </div>
+          </div>
+        </div>
+        <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
+          <span class="text-slate-700">配件加裝費用合計</span>
+          <span id="accessoryTotal" class="text-base font-black text-blue-700 font-mono">NT$ 0 元</span>
+        </div>
+      </div>
+
+      <!-- 其他約定事項 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col justify-between print-card">
+        <div class="flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-2">其他約定事項</h3>
+            <span class="text-[11px] text-slate-400 no-print">可點選下方快捷詞彙</span>
+          </div>
+          <textarea id="otherNotes" rows="7" placeholder="請填寫交車贈品、特殊交期、代辦事項或雙方其他特別約定事項..." class="w-full flex-1 border border-slate-300 rounded-xl p-3 text-xs leading-relaxed resize-none focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+        </div>
+        <div class="pt-2.5 flex flex-wrap gap-1.5 no-print">
+          <button type="button" onclick="appendNote('贈送全車防水踏墊及後廂托盤。')" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg transition">+ 防水踏墊/托盤</button>
+          <button type="button" onclick="appendNote('贈送 E-Tag 申辦安裝。')" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg transition">+ E-Tag 申辦</button>
+          <button type="button" onclick="appendNote('規費及牌照燃料稅採多退少補實報實銷。')" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg transition">+ 規費多退少補</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 契約條款（第一至十五條）與第十四條金鈴汽車個資同意簽名 -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 space-y-4 print-card">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="text-base font-bold text-slate-900 border-l-4 border-blue-600 pl-2.5">契約條款與個人資料同意聲明（第一條至第十五條）</h3>
+        <button type="button" onclick="toggleTerms()" id="toggleTermsBtn" class="text-xs text-blue-600 font-semibold hover:underline no-print flex items-center gap-1">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i> 展開／收合完整契約條文
+        </button>
+      </div>
+
+      <div id="contractTermsBox" class="text-xs text-slate-700 space-y-2 leading-relaxed max-h-60 overflow-y-auto border border-slate-200 rounded-xl p-4 bg-slate-50">
+        <p><strong>一、契約之生效：</strong>本契約書經買受人與出賣人及經手人簽章，並經買受人交付訂金由出賣人收訖現金或票據兌現後始生效力。本契約書生效後，非經雙方另以書面簽章外，任何一方不得轉讓及（或）典當本契約之一切權利義務。另有關本契約書增刪修改，應由雙方以書面為之。</p>
+        <p><strong>二、標的物規格、顏色之變更或停止供應：</strong>本契約標的物之車色，非經他方同意，契約當事人任何一方不得要求變更規格、顏色或配件。本契約標的物之車輛因供應廠商改款、變更或停止供應，致出賣人不能依原約定車型交車，出賣人應即通知買受人，買受人得解除契約，請求返還已付價金，及自受領日起至返還日止依法定利率計算之利息。但買受人亦得不解除契約而依出賣人所定價格標準核算買賣價金，並受領改良或變更後之標的物者，出賣人不得拒絕。</p>
+        <p><strong>三、匯率與關稅等之變動：</strong>訂購已進口之汽車或國產汽車時，本契約書所載之價金，除另有約定外，已包括進口關稅、商港建設費、貨物稅、營業稅、交車前之運費、運送保險費及其他應由出賣人負擔之稅費；但不包括申請牌照手續費、車輛保險費、監理規費、使用牌照稅及燃料費等應由買受人負擔之各項稅費及費用。本契約簽訂後，上述法定稅費如有調整，其利益或不利益均歸買受人承受及負擔，但可歸責於出賣人之事由致增加負擔者，其增加部份由出賣人負擔。</p>
+        <p><strong>四、契約履行：</strong>1. 出賣人逾本契約書約定交車日期未交付車輛，經買受人以書面催告後30日內仍未履行者，買受人得解除本訂購合約，並請求出賣人返還已付訂金及出賣人受領訂金之日起至返還日止法定年利率計算之利息。2. 買受人經出賣人通知交車日後15日內仍未備齊尾款及各項費用辦理交車手續者，出賣人得解除本訂購合約，並沒收買受人已給付之訂金及價金，但出賣人沒收之價金，不得逾本契約買賣總價金之百分之十，逾百分之十者應縮減為百分之十，但出賣人能證明其所受損害超過車價總額之百分之十者，不在此限。</p>
+        <p><strong>五、瑕疵擔保責任或保固責任：</strong>出賣人應依民法及其他法令規定對買受人負瑕疵擔保責任。出賣人自交車之日起三年或行駛十萬公里（以先到者為準），對車輛本身之瑕疵零件負更新或修復之責任，但顯係因買受人未依車主手冊使用車輛，或未依保養手冊所定時間、里程、場所保養或維修所致者，出賣人不負保固責任。車輛因天然災害、自然耗損或因可歸責於買受人之事由致生損壞者，亦同。</p>
+        <p><strong>六、召回改正及檢修：</strong>標的物經製造廠、進口商或進口人召回改正者，出賣人應安排檢修之時間與地點，並應負免費檢修之義務。標的物經中央公路主管機關或目的事業主管機關責令召回改正者，出賣人應於接獲通知後七個工作日內公告周知，並於該期間內依照買受人所留存之聯絡方式個別通知買受人檢修之時間與地點及免費檢修之權利。</p>
+        <p><strong>七、品質擔保：</strong>出賣人應擔保買賣標的物符合交車時之環保、道路交通安全及耗能等相關法令之規定標準。車輛未達規定標準而能改善者，買受人得訂相當期限催告出賣人改善，逾期未改善或不能改善者，買受人得解除契約，請求返還已給付之價金，及自受領日起至返還日止，依法定利率計算之利息。</p>
+        <p><strong>八、因標的物重大瑕疵之解約或更換新車：</strong>交車後一百八十天內或行駛一萬二千公里之內（以先到者為準），若發生下列重大瑕疵情事之一，經雙方同意之專業機構鑑定或由買受人逕行委託經中央主管機關公告之專業機構鑑定，鑑定結果證實係因標的物瑕疵所致，而非買受人及（或）車輛使用者之故意或過失所致者，出賣人除應負擔鑑定費用外，並應依買受人之請求更換同型新車（或等值新車）予買受人；或依買受人之請求而解除本契約並返還已付之價金：（一）於行駛時突然起火燃燒者（二）於行駛時煞車失靈，經送出賣人或原廠維修二次而未修復者（三）於行駛時突然熄火故障，經送出賣人或原廠維修二次而未修復者（四）於排檔或行駛時發生暴衝，經送出賣人或原廠維修二次而未修復者（五）於行駛時引擎溫度升高至極限，經送出賣人或原廠維修二次而未修復者（六）其他重大瑕疵，有危害生命安全或身體健康之虞，經送出賣人或原廠維修二次而未修復者。</p>
+        <p><strong>九、標的物屢修不復之效果：</strong>若發生下列情事之一，出賣人應依買受人之請求更換同型（或等值）新車予買受人，或依買受人之請求而解除本契約並返還已付之價金：（一）交車後一百八十天內或行駛一萬二千公里之內（以先到者為準），因相同瑕疵經送修出賣人或原廠檢修四次而無法回復正常機能者。（二）交車後一百八十天之內，因機能瑕疵所致無法正常使用車輛，經出賣人檢修，其累積無法使用日數達三十日以上。</p>
+        <p><strong>十、保證書及使用說明書：</strong>出售產品者應訂約後，至遲於交車時，交付標的物之中文保證書及中文使用說明書，並包含標的物之組件功能說明、正確使用方法、操作程序、危險警語與避免方式、簡易故障處理及維修服務處所相關資訊。</p>
+        <p><strong>十一、除本契約另有約定外，</strong>買受人得以書面通知出賣人將由本契約所生之債權讓與第三人，並由第三人負擔其債務，但買受人仍應負連帶給付之責。</p>
+        <p><strong>十二、因不可歸責於雙方當事人之事由，</strong>致給付不能者，出賣人應返還買受人已付之價金，及自受領日起至返還日止依法定利率計算之利息。</p>
+        <p><strong>十三、代辦義務及手續費用：</strong>買受人得委任出賣人代辦申請牌照及動產擔保交易登記等手續，出賣人不得拒絕。除有特別約定者外，政府規費及代辦費用由買受人負擔。</p>
+        <p><strong>十四、對於買受人為購買本契約標的物之車輛所提供之個人資料，買受人瞭解且同意如下：</strong>（一）買受人之個人資料係由出賣人及SUZUKI台灣總代理金鈴汽車股份有限公司（下稱「金鈴汽車」）所分別蒐集，基於履行本契約、維修保養服務、辦理購車貸款與保險、保險理賠、事故處理、道路救援、客戶關懷服務及行銷等目的，出賣人與金鈴汽車得於中華民國境內，分別蒐集、處理及利用買受人於買賣契約中所提供之個人資料。（二）買受人同意基於上述目的之必要，出賣人及金鈴汽車得分別委託其關係企業、金鈴汽車授權之經銷商及服務廠，就上開個人資料予以處理、利用或為跨國傳輸。（三）買受人瞭解在符合個人資料保護相關法令規定下，其得向出賣人或金鈴汽車請求閱覽、補充、更正、停止蒐集／處理或利用、或刪除其個人資料，或請求提供該等資料之複製本。（四）買受人瞭解如其不願提供上開個人資料，可能導致上述部分或全部之目的無法完成，而對買受人之權益有所影響。</p>
+        <p><strong>十五、本訂購合約如有未盡事宜，</strong>雙方應本誠實原則協商處理，如有爭議而無法協商處理時，雙方同意以出賣人營業所所在地之地方法院為第一審管轄法院。</p>
+      </div>
+
+      <!-- 第十四條專屬簽名區 -->
+      <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="text-xs font-bold text-slate-800 leading-relaxed">
+            【第十四條個資同意簽署】買受人已充份了解出賣人及金鈴汽車將如何使用個人資料及買受人就其提供個人資料之相關權益，基此，同意本條約定並提供個人資料：
+          </p>
+          <button type="button" onclick="clearSignature('sigPadPrivacy')" class="px-3 py-1 text-xs bg-white border border-slate-300 rounded-lg hover:bg-slate-100 font-medium text-slate-700 transition no-print">
+            <i class="fa-solid fa-eraser mr-1"></i>清除重簽
+          </button>
+        </div>
+        <div class="sig-canvas-wrapper h-24 md:w-96">
+          <canvas id="sigPadPrivacy" class="sig-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- 三天審閱期聲明勾選 -->
+      <div class="pt-1">
+        <label class="flex items-start gap-2.5 text-xs sm:text-sm font-bold text-slate-900 cursor-pointer">
+          <input type="checkbox" id="reviewConfirm" class="mt-1 w-4 h-4 accent-blue-600 rounded" checked>
+          <span>買受人茲聲明，其已被給予三天以上之期間審閱本契約之內容，並同意以上所有之約款。本契約書一式四份，由買受人執一份，出賣人執二份及出賣人之銷售業務代表執一份為憑。</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 7. 買賣雙方簽署區與營業所地址電話管理 -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 print-card">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- 左欄：買受人簽章與同步資料 -->
+        <div class="space-y-3 border-b lg:border-b-0 lg:border-r border-slate-200 pb-5 lg:pb-0 lg:pr-6">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-2">買受人簽署欄（簽名蓋章）</h4>
+            <button type="button" onclick="clearSignature('sigPadBuyer')" class="px-3 py-1 text-xs bg-slate-100 border border-slate-300 rounded-lg hover:bg-slate-200 font-medium text-slate-700 transition no-print">
+              <i class="fa-solid fa-eraser mr-1"></i>清除簽名
+            </button>
+          </div>
+
+          <div class="sig-canvas-wrapper h-36">
+            <canvas id="sigPadBuyer" class="sig-canvas"></canvas>
+          </div>
+
+          <div class="text-xs space-y-1.5 text-slate-700 pt-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div class="flex"><span class="font-bold w-40 shrink-0 text-slate-600">買受人：</span><span id="footerBuyerName" class="font-bold text-slate-900">—</span></div>
+            <div class="flex"><span class="font-bold w-40 shrink-0 text-slate-600">地　址：</span><span id="footerBuyerAddress">—</span></div>
+            <div class="flex"><span class="font-bold w-40 shrink-0 text-slate-600">電　話：</span><span id="footerBuyerTel" class="font-mono">—</span></div>
+            <div class="flex"><span class="font-bold w-40 shrink-0 text-slate-600">營利事業或身分證統一編號：</span><span id="footerBuyerId" class="font-mono">—</span></div>
+          </div>
+        </div>
+
+        <!-- 右欄：出賣人資訊與四大營業所設定 -->
+        <div class="space-y-3 text-xs text-slate-700 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h4 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-2">出賣人資訊</h4>
+              <div class="flex items-center gap-1.5 no-print">
+                <button type="button" onclick="saveCurrentBranchToStorage()" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg font-semibold transition" title="將目前修改後的營業所地址與電話記住">
+                  <i class="fa-solid fa-floppy-disk mr-1"></i>儲存分所設定
+                </button>
+                <button type="button" onclick="resetBranchesToDefault()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 rounded-lg transition" title="還原預設分所地址電話">
+                  預設
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">
+              <p class="text-sm font-black text-slate-900">出賣人：勁順汽車股份有限公司</p>
+              <p class="font-bold text-blue-800 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-200 font-mono">
+                銀行帳號：合作金庫中興分行 0500717135027
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label for="sellerRep" class="block text-slate-600 font-semibold mb-1">代表人</label>
+                <input type="text" id="sellerRep" placeholder="代表人姓名" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-xs">
+              </div>
+              <div>
+                <label for="salesAgent" class="block text-slate-600 font-semibold mb-1">銷售業務代表（簽名蓋章）</label>
+                <input type="text" id="salesAgent" placeholder="請輸入業代姓名與聯絡手機" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900">
+              </div>
+
+              <!-- 營業所快速切換（與頂部同步） -->
+              <div class="sm:col-span-2 no-print">
+                <label class="block text-slate-600 font-semibold mb-1">切換營業所據點（鳳山 / 民族 / 大中 / 屏東）：</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button type="button" onclick="selectBranch('民族所')" data-branch-btn="民族所" class="branch-tab py-1.5 px-2 rounded-lg border text-xs font-bold transition">民族所</button>
+                  <button type="button" onclick="selectBranch('鳳山所')" data-branch-btn="鳳山所" class="branch-tab py-1.5 px-2 rounded-lg border text-xs font-bold transition">鳳山所</button>
+                  <button type="button" onclick="selectBranch('大中所')" data-branch-btn="大中所" class="branch-tab py-1.5 px-2 rounded-lg border text-xs font-bold transition">大中所</button>
+                  <button type="button" onclick="selectBranch('屏東所')" data-branch-btn="屏東所" class="branch-tab py-1.5 px-2 rounded-lg border text-xs font-bold transition">屏東所</button>
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="sellerAddress" class="block text-slate-600 font-semibold mb-1">地　址（營業所地址，可手動微調）</label>
+                <input type="text" id="sellerAddress" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-medium text-slate-900">
+              </div>
+              <div class="sm:col-span-2">
+                <label for="sellerPhone" class="block text-slate-600 font-semibold mb-1">電　話（營業所電話，可手動微調）</label>
+                <input type="text" id="sellerPhone" class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-mono font-medium text-slate-900">
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold text-slate-900">
+            <span>契約簽訂日期：</span>
+            <span id="rocDateDisplay" class="tracking-wider">中華民國 115 年 11 月 17 日</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ==========================================
+    // 1. 勁順汽車 四大營業所預設資料庫
+    // ==========================================
+    const DEFAULT_BRANCHES = {
+      '民族所': {
+        name: '民族營業所',
+        address: '高雄市三民區民族一路560號',
+        phone: '(07) 347-5577'
+      },
+      '鳳山所': {
+        name: '鳳山營業所',
+        address: '高雄市鳳山區建國路三段258號',
+        phone: '(07) 777-5577'
+      },
+      '大中所': {
+        name: '大中營業所',
+        address: '高雄市左營區大中二路600號',
+        phone: '(07) 346-5577'
+      },
+      '屏東所': {
+        name: '屏東營業所',
+        address: '屏東縣屏東市建國路268號',
+        phone: '(08) 755-5577'
+      }
+    };
+
+    const BRANCH_STORAGE_KEY = 'jingshun_branches_v1';
+    let branchData = loadBranchesFromStorage();
+    let currentBranchKey = '民族所';
+
+    function loadBranchesFromStorage() {
+      try {
+        const saved = localStorage.getItem(BRANCH_STORAGE_KEY);
+        if (saved) {
+          return { ... JSON.parse(JSON.stringify(DEFAULT_BRANCHES)), ...JSON.parse(saved) };
+        }
+      } catch (e) {
+        console.warn('無法讀取 LocalStorage 分所資料', e);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_BRANCHES));
+    }
+
+    // 切換營業所（民族所 / 鳳山所 / 大中所 / 屏東所）
+    function selectBranch(branchKey, silent = false) {
+      if (!branchData[branchKey]) return;
+      currentBranchKey = branchKey;
+      const info = branchData[branchKey];
+
+      // 同步頂部下拉選單與徽章
+      const topSelect = document.getElementById('branchSelectTop');
+      if (topSelect) topSelect.value = branchKey;
+
+      const badge = document.getElementById('currentBranchBadge');
+      if (badge) badge.textContent = `目前據點：${info.name}`;
+
+      // 同步底部出賣人地址與電話
+      document.getElementById('sellerAddress').value = `${info.address}（${info.name}）`;
+      document.getElementById('sellerPhone').value = info.phone;
+
+      // 同步交車地點
+      document.getElementById('deliveryLocation').value = `勁順汽車 ${info.name}（${info.address}）`;
+
+      // 更新所有分所按鈕高亮狀態
+      document.querySelectorAll('.branch-tab').forEach(btn => {
+        const isTarget = btn.getAttribute('data-branch-btn') === branchKey;
+        if (btn.closest('header')) {
+          btn.className = isTarget
+            ? 'branch-tab px-2.5 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow transition'
+            : 'branch-tab px-2.5 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition';
+        } else {
+          btn.className = isTarget
+            ? 'branch-tab py-1.5 px-2 rounded-lg border border-blue-600 bg-blue-600 text-white text-xs font-bold shadow-xs transition'
+            : 'branch-tab py-1.5 px-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 text-xs font-semibold transition';
+        }
+      });
+
+      if (!silent) {
+        showToast(`已切換至「${info.name}」，自動帶入地址與電話`);
+      }
+    }
+
+    // 儲存分所微調後的地址與電話至 LocalStorage
+    function saveCurrentBranchToStorage() {
+      const rawAddr = document.getElementById('sellerAddress').value.replace(/（.*?營業所）/g, '').trim();
+      const rawPhone = document.getElementById('sellerPhone').value.trim();
+      branchData[currentBranchKey] = {
+        name: DEFAULT_BRANCHES[currentBranchKey].name,
+        address: rawAddr || DEFAULT_BRANCHES[currentBranchKey].address,
+        phone: rawPhone || DEFAULT_BRANCHES[currentBranchKey].phone
+      };
+      try {
+        localStorage.setItem(BRANCH_STORAGE_KEY, JSON.stringify(branchData));
+        showToast(`已儲存「${currentBranchKey}」自訂地址與電話設定！`, 'success');
+      } catch (e) {
+        showToast('儲存設定時發生錯誤', 'error');
+      }
+    }
+
+    // 還原預設四大分所設定
+    function resetBranchesToDefault() {
+      branchData = JSON.parse(JSON.stringify(DEFAULT_BRANCHES));
+      try {
+        localStorage.removeItem(BRANCH_STORAGE_KEY);
+      } catch (e) {}
+      selectBranch(currentBranchKey, true);
+      showToast('已還原四大營業所預設地址與電話');
+    }
+
+    // 快速設定交車地點為分所或買受人地址
+    function setDeliveryLocMode(mode) {
+      if (mode === 'branch') {
+        const info = branchData[currentBranchKey];
+        document.getElementById('deliveryLocation').value = `勁順汽車 ${info.name}（${info.address}）`;
+        showToast('交車地點已設為營業所');
+      } else {
+        const buyerAddr = document.getElementById('buyerAddress').value.trim();
+        if (!buyerAddr) {
+          showToast('請先填寫買受人戶籍地址', 'warning');
+          return;
+        }
+        document.getElementById('deliveryLocation').value = buyerAddr;
+        showToast('交車地點已設為買受人地址');
+      }
+    }
+
+    // ==========================================
+    // 2. SUZUKI 全車系車型 / 排氣量 / 售價資料庫
+    // ==========================================
+    const SUZUKI_LINEUP = [
+      { id: 'swift-1', family: 'SWIFT', model: 'SWIFT', style: '1.2L GLX (單色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 730000 },
+      { id: 'swift-2', family: 'SWIFT', model: 'SWIFT', style: '1.2L GLX (Two-Tone 雙色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 740000 },
+      { id: 'ignis-1', family: 'IGNIS', model: 'IGNIS', style: '1.2L GLX (單色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 695000 },
+      { id: 'ignis-2', family: 'IGNIS', model: 'IGNIS', style: '1.2L GLX (Two-Tone 雙色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 705000 },
+      { id: 'vitara-1', family: 'VITARA', model: 'VITARA', style: 'S 1.4L 2WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 940000 },
+      { id: 'vitara-2', family: 'VITARA', model: 'VITARA', style: 'S ALLGRIP 1.4L 4WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 1040000 },
+      { id: 'scross-1', family: 'S-CROSS', model: 'S-CROSS', style: '1.4L 2WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 980000 },
+      { id: 'scross-2', family: 'S-CROSS', model: 'S-CROSS', style: 'ALLGRIP 1.4L 4WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 1140000 },
+      { id: 'jimny-1', family: 'JIMNY', model: 'JIMNY', style: '1.5L GLX 4WD (單色)', cc: 1462, origin: '日本', energy: '汽油', price: 849000 },
+      { id: 'jimny-2', family: 'JIMNY', model: 'JIMNY', style: '1.5L GLX 4WD (Two-Tone 雙色)', cc: 1462, origin: '日本', energy: '汽油', price: 859000 },
+      { id: 'carry-1', family: 'CARRY', model: 'CARRY', style: '1.5L 商用貨車', cc: 1462, origin: '印尼', energy: '汽油', price: 528000 },
+      { id: 'evitara-1', family: 'e-VITARA', model: 'e-VITARA', style: '純電 SUV 2WD', cc: 0, origin: '印度', energy: '純電(EV)', price: 1150000 },
+      { id: 'evitara-2', family: 'e-VITARA', model: 'e-VITARA', style: 'ALLGRIP-e 純電 4WD', cc: 0, origin: '印度', energy: '純電(EV)', price: 1250000 }
+    ];
+
+    let currentSelectedMsrp = 0;
+    let activeFamilyFilter = 'ALL';
+
+    function initSuzukiCatalog() {
+      const families = ['ALL', 'SWIFT', 'IGNIS', 'VITARA', 'S-CROSS', 'JIMNY', 'CARRY', 'e-VITARA'];
+      const tabContainer = document.getElementById('modelFamilyTabs');
+      tabContainer.innerHTML = '';
+
+      families.forEach(fam => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isActive = fam === activeFamilyFilter;
+        btn.className = isActive
+          ? 'px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-500 text-white shadow transition'
+          : 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 transition';
+        btn.textContent = fam === 'ALL' ? '全部車系 (13)' : fam;
+        btn.onclick = () => filterModelFamily(fam);
+        tabContainer.appendChild(btn);
+      });
+
+      populateModelDropdown(activeFamilyFilter);
+    }
+
+    function filterModelFamily(family) {
+      activeFamilyFilter = family;
+      initSuzukiCatalog();
+      const filtered = family === 'ALL' ? SUZUKI_LINEUP : SUZUKI_LINEUP.filter(m => m.family === family);
+      if (family !== 'ALL' && filtered.length > 0) {
+        document.getElementById('suzukiQuickSelect').value = filtered[0].id;
+        applySuzukiModel(filtered[0].id);
+      }
+    }
+
+    function populateModelDropdown(family) {
+      const select = document.getElementById('suzukiQuickSelect');
+      const currentVal = select.value;
+      select.innerHTML = '<option value="">-- 請選擇 SUZUKI 車型 / 式樣 / 排氣量 / 建議售價 --</option>';
+
+      const list = family === 'ALL' ? SUZUKI_LINEUP : SUZUKI_LINEUP.filter(m => m.family === family);
+      list.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        const ccText = item.cc > 0 ? `${item.cc} c.c.` : '純電 0 c.c.';
+        opt.textContent = `${item.model}｜${item.style}｜${ccText}｜${item.origin}｜${item.energy}｜NT$ ${item.price.toLocaleString()} 元`;
+        select.appendChild(opt);
+      });
+
+      if (currentVal && list.some(i => i.id === currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    // 選擇車款後自動帶入所有規格與建議售價
+    function applySuzukiModel(modelId) {
+      const item = SUZUKI_LINEUP.find(m => m.id === modelId);
+      if (!item) return;
+
+      document.getElementById('carModel').value = item.model;
+      document.getElementById('carStyle').value = item.style;
+      document.getElementById('carCc').value = item.cc;
+      document.getElementById('carOrigin').value = item.origin;
+      document.getElementById('carEnergy').value = item.energy;
+      document.getElementById('vehiclePrice').value = item.price;
+
+      currentSelectedMsrp = item.price;
+
+      const tag = document.getElementById('selectedTrimTag');
+      tag.textContent = `建議售價：NT$ ${item.price.toLocaleString()} 元`;
+      tag.classList.remove('hidden');
+
+      updatePriceCalc();
+      showToast(`已帶入「${item.model} - ${item.style}」規格與售價 NT$ ${item.price.toLocaleString()}`);
+    }
+
+    function applySelectedModelAgain() {
+      const val = document.getElementById('suzukiQuickSelect').value;
+      if (!val) {
+        showToast('請先從選單選擇一款 SUZUKI 車型', 'warning');
+        return;
+      }
+      applySuzukiModel(val);
+    }
+
+    function setQuickColor(colorName) {
+      document.getElementById('carColor').value = colorName;
+      showToast(`已填入車色：${colorName}`);
+    }
+
+    // ==========================================
+    // 3. 車價計算、新台幣大寫金額與買受人同步
+    // ==========================================
+    function updatePriceCalc() {
+      const price = parseInt(document.getElementById('vehiclePrice').value, 10) || 0;
+      const deposit = parseInt(document.getElementById('depositAmount').value, 10) || 0;
+      const balance = Math.max(price - deposit, 0);
+
+      document.getElementById('balanceAmount').value = balance;
+      document.getElementById('formattedBalanceHint').textContent = `NT$ ${balance.toLocaleString()} 元`;
+
+      // 比較建議售價與實際成交價差額提示
+      const msrpBadge = document.getElementById('msrpCompareBadge');
+      if (currentSelectedMsrp > 0 && price > 0) {
+        const diff = currentSelectedMsrp - price;
+        msrpBadge.classList.remove('hidden');
+        if (diff > 0) {
+          msrpBadge.textContent = `建議售價 $${currentSelectedMsrp.toLocaleString()}｜折讓優惠 -NT$ ${diff.toLocaleString()} 元`;
+          msrpBadge.className = 'text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full';
+        } else if (diff < 0) {
+          msrpBadge.textContent = `建議售價 $${currentSelectedMsrp.toLocaleString()}｜含選配加價 +NT$ ${Math.abs(diff).toLocaleString()} 元`;
+          msrpBadge.className = 'text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full';
+        } else {
+          msrpBadge.textContent = `依官方建議售價 NT$ ${currentSelectedMsrp.toLocaleString()} 元計價`;
+          msrpBadge.className = 'text-xs font-bold text-slate-600 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full';
+        }
+      } else {
+        msrpBadge.classList.add('hidden');
+      }
+
+      // 轉換新台幣大寫（佰、拾、萬、仟、佰、拾、元整）
+      const zhNums = ['零', '壹', '貳', '參', '肆', '伍', '陸', '柒', '捌', '玖'];
+      const clampedPrice = Math.min(Math.max(price, 0), 9999999);
+      const padded = String(clampedPrice).padStart(7, '0');
+      const units = ['佰', '拾', '萬', '仟', '佰', '拾', '元整'];
+
+      let html = '<span class="text-slate-500 mr-1">新台幣 $</span>';
+      for (let i = 0; i < 7; i++) {
+        const digit = parseInt(padded[i], 10);
+        html += `<span class="zh-num-box">${zhNums[digit]}</span><span class="mr-1 text-slate-700">${units[i]}</span>`;
+      }
+      document.getElementById('chinesePriceDisplay').innerHTML = html;
+    }
+
+    function setQuickDeposit(amount) {
+      document.getElementById('depositAmount').value = amount;
+      updatePriceCalc();
+    }
+
+    // 同步買受人資訊至底部簽名欄
+    function syncFooterBuyer() {
+      const name = document.getElementById('buyerName').value.trim();
+      const addr = document.getElementById('buyerAddress').value.trim();
+      const telHome = document.getElementById('buyerTelHome').value.trim();
+      const telWork = document.getElementById('buyerTelWork').value.trim();
+      const idNo = document.getElementById('buyerId').value.trim();
+
+      document.getElementById('footerBuyerName').textContent = name || '—';
+      document.getElementById('footerBuyerAddress').textContent = addr || '—';
+      document.getElementById('footerBuyerTel').textContent = [telHome, telWork].filter(Boolean).join(' / ') || '—';
+      document.getElementById('footerBuyerId').textContent = idNo || '—';
+    }
+
+    // 同買受人資料一鍵帶入使用人
+    function copyBuyerToUser() {
+      document.getElementById('userName').value = document.getElementById('buyerName').value;
+      document.getElementById('userTelHome').value = document.getElementById('buyerTelHome').value;
+      document.getElementById('userTelWork').value = document.getElementById('buyerTelWork').value;
+      document.getElementById('userAddress').value = document.getElementById('buyerAddress').value;
+      showToast('已將買受人資料複製至使用人（連絡人）欄位');
+    }
+
+    // 配件加裝自動加總与新增列
+    function calcAccessories() {
+      let sum = 0;
+      document.querySelectorAll('.acc-price').forEach(input => {
+        sum += parseInt(input.value, 10) || 0;
+      });
+      document.getElementById('accessoryTotal').textContent = `NT$ ${sum.toLocaleString()} 元`;
+    }
+
+    function addAccessoryRow() {
+      const container = document.getElementById('accessoryList');
+      const idx = container.children.length + 1;
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-1.5';
+      row.innerHTML = `
+        <span class="w-5 text-slate-500 font-mono font-bold">${idx}.</span>
+        <input type="text" placeholder="品名／規格" class="flex-1 border border-slate-300 rounded-lg px-2.5 py-1.5">
+        <input type="number" placeholder="金額" oninput="calcAccessories()" class="acc-price w-24 border border-slate-300 rounded-lg px-2 py-1.5 text-right font-mono">
+      `;
+      container.appendChild(row);
+    }
+
+    // 快捷新增其他約定事項
+    function appendNote(text) {
+      const area = document.getElementById('otherNotes');
+      area.value = area.value ? `${area.value}\n${text}` : text;
+    }
+
+    // 展開或收合契約條款
+    function toggleTerms() {
+      const box = document.getElementById('contractTermsBox');
+      box.classList.toggle('max-h-60');
+    }
+
+    // 自動產生契約單號与民國日期
+    function generateSerialNo() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const rand = String(Math.floor(Math.random() * 900) + 100);
+      document.getElementById('docNo').value = `JS-${y}${m}${d}-${rand}`;
+    }
+
+    function initRocDate() {
+      const today = new Date();
+      const rocYear = today.getFullYear() - 1911;
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      document.getElementById('rocDateDisplay').textContent = `中華民國 ${rocYear} 年 ${month} 月 ${day} 日`;
+    }
+
+    // ==========================================
+    // 4. 響應式手寫簽名板（支援縮放保留筆跡）
+    // ==========================================
+    const signaturePads = {};
+
+    function initResponsiveSignaturePad(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      signaturePads[canvasId] = { canvas, ctx, strokes: [], currentStroke: [] };
+
+      function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        redrawStrokes(canvasId);
+      }
+
+      function getNormPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          nx: (clientX - rect.left) / rect.width,
+          ny: (clientY - rect.top) / rect.height
+        };
+      }
+
+      function startDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        const pos = getNormPos(e);
+        signaturePads[canvasId].currentStroke = [pos];
+        redrawStrokes(canvasId);
+      }
+
+      function moveDraw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getNormPos(e);
+        signaturePads[canvasId].currentStroke.push(pos);
+        redrawStrokes(canvasId);
+      }
+
+      function endDraw() {
+        if (!drawing) return;
+        drawing = false;
+        if (signaturePads[canvasId].currentStroke.length > 0) {
+          signaturePads[canvasId].strokes.push(signaturePads[canvasId].currentStroke);
+          signaturePads[canvasId].currentStroke = [];
+        }
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', endDraw);
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      canvas.addEventListener('touchend', endDraw);
+
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    function redrawStrokes(canvasId) {
+      const pad = signaturePads[canvasId];
+      if (!pad) return;
+      const { canvas, ctx, strokes, currentStroke } = pad;
+      const rect = canvas.parentElement.getBoundingClientRect();
+
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#0f172a';
+
+      const allStrokes = [...strokes, ...(currentStroke.length ? [currentStroke] : [])];
+      allStrokes.forEach(stroke => {
+        if (stroke.length === 0) return;
+        ctx.beginPath();
+        ctx.moveTo(stroke[0].nx * rect.width, stroke[0].ny * rect.height);
+        for (let i = 1; i < stroke.length; i++) {
+          ctx.lineTo(stroke[i].nx * rect.width, stroke[i].ny * rect.height);
+        }
+        ctx.stroke();
+      });
+    }
+
+    function clearSignature(canvasId) {
+      const pad = signaturePads[canvasId];
+      if (!pad) return;
+      pad.strokes = [];
+      pad.currentStroke = [];
+      redrawStrokes(canvasId);
+      showToast('已清除簽名板');
+    }
+
+    // ==========================================
+    // 5. 自訂 Toast 通知與 Modal 確認視窗
+    // ==========================================
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colorMap = {
+        info: 'bg-slate-900 text-white border-slate-700',
+        success: 'bg-emerald-700 text-white border-emerald-500',
+        warning: 'bg-amber-600 text-white border-amber-400',
+        error: 'bg-rose-700 text-white border-rose-500'
+      };
+      toast.className = `${colorMap[type] || colorMap.info} border px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 transition-all duration-300 opacity-0 translate-y-2`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${message}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('opacity-0', 'translate-y-2');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 2600);
+    }
+
+    function openModal(title, message, onConfirm) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      const modal = document.getElementById('customModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      confirmBtn.onclick = () => {
+        closeModal();
+        if (typeof onConfirm === 'function') onConfirm();
+      };
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('customModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmResetForm() {
+      openModal(
+        '清空重填契約確認',
+        '確定要清空目前填寫的所有買受人資料、車輛規格、金額與手寫簽名嗎？',
+        () => {
+          document.querySelectorAll('input').forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') return;
+            if (el.id === 'carQty') { el.value = '1'; return; }
+            if (el.id === 'carYear') { el.value = '2026 / 2026'; return; }
+            el.value = '';
+          });
+          document.getElementById('otherNotes').value = '';
+          document.getElementById('suzukiQuickSelect').value = '';
+          document.getElementById('selectedTrimTag').classList.add('hidden');
+          currentSelectedMsrp = 0;
+
+          clearSignature('sigPadPrivacy');
+          clearSignature('sigPadBuyer');
+          selectBranch(currentBranchKey, true);
+          generateSerialNo();
+          updatePriceCalc();
+          calcAccessories();
+          syncFooterBuyer();
+          showToast('已清空所有欄位並重新初始化表單');
+        }
+      );
+    }
+
+    function handlePrintContract() {
+      window.print();
+    }
+
+    // ==========================================
+    // 6. 系統初始化啟動
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      initRocDate();
+      generateSerialNo();
+      initSuzukiCatalog();
+      selectBranch('民族所', true);
+      updatePriceCalc();
+      calcAccessories();
+      initResponsiveSignaturePad('sigPadPrivacy');
+      initResponsiveSignaturePad('sigPadBuyer');
+    });
+  </script>
+</body>
+</html>
