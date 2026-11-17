@@ -361,14 +361,22 @@
         <!-- 熱門車色快速點選 -->
         <div class="pt-2 border-t border-slate-700/80 flex flex-wrap items-center gap-1.5 text-xs">
           <span class="text-slate-400 mr-1"><i class="fa-solid fa-palette mr-1"></i>常用車色快選：</span>
-          <button type="button" onclick="setQuickColor('極光白')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">極光白</button>
-          <button type="button" onclick="setQuickColor('星際藍')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">星際藍</button>
-          <button type="button" onclick="setQuickColor('動感紅')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">動感紅</button>
-          <button type="button" onclick="setQuickColor('鐵灰')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">鐵灰</button>
-          <button type="button" onclick="setQuickColor('戰術綠')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">戰術綠</button>
-          <button type="button" onclick="setQuickColor('象牙白(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">象牙白(黑頂雙色)</button>
-          <button type="button" onclick="setQuickColor('星際藍(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">星際藍(黑頂雙色)</button>
-          <button type="button" onclick="setQuickColor('動感紅(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">動感紅(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('白')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">白</button>
+          <button type="button" onclick="setQuickColor('水泥灰')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">水泥灰</button>
+          <button type="button" onclick="setQuickColor('米')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">米</button>
+          <button type="button" onclick="setQuickColor('黑')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">黑</button>
+          <button type="button" onclick="setQuickColor('灰')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">灰</button>
+          <button type="button" onclick="setQuickColor('藍')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">藍</button>
+          <button type="button" onclick="setQuickColor('銀')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">銀</button>
+          <button type="button" onclick="setQuickColor('橘')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">橘</button>
+          <button type="button" onclick="setQuickColor('軍綠')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">軍綠</button>
+          <button type="button" onclick="setQuickColor('綠黑(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">綠黑(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('白黑(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">白黑(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('黃黑(灰頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">黃黑(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('藍黑(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">藍黑(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('黃灰(灰頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">黃灰(灰頂雙色)</button>
+          <button type="button" onclick="setQuickColor('紅黑(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">紅黑(黑頂雙色)</button>
+          <button type="button" onclick="setQuickColor('米黑(黑頂雙色)')" class="px-2.5 py-1 rounded-lg bg-slate-700/80 hover:bg-slate-600 text-slate-100 transition">米黑(黑頂雙色)</button>
         </div>
       </div>
 
@@ -805,23 +813,23 @@
     const DEFAULT_BRANCHES = {
       '民族所': {
         name: '民族營業所',
-        address: '高雄市三民區民族一路560號',
-        phone: '(07) 347-5577'
+        address: '高雄市三民區民族一路400號',
+        phone: '(07) 382-2807'
       },
       '鳳山所': {
         name: '鳳山營業所',
-        address: '高雄市鳳山區建國路三段258號',
-        phone: '(07) 777-5577'
+        address: '高雄市鳳山區瑞隆東路118號',
+        phone: '(07) 766-6888'
       },
       '大中所': {
         name: '大中營業所',
-        address: '高雄市左營區大中二路600號',
-        phone: '(07) 346-5577'
+        address: '高雄市左營區大中二路60號',
+        phone: '(07) 626-5507'
       },
       '屏東所': {
         name: '屏東營業所',
-        address: '屏東縣屏東市建國路268號',
-        phone: '(08) 755-5577'
+        address: '屏東縣屏東市建國路352號',
+        phone: '(08) 755-8282'
       }
     };
 
@@ -930,17 +938,15 @@
     const SUZUKI_LINEUP = [
       { id: 'swift-1', family: 'SWIFT', model: 'SWIFT', style: '1.2L GLX (單色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 730000 },
       { id: 'swift-2', family: 'SWIFT', model: 'SWIFT', style: '1.2L GLX (Two-Tone 雙色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 740000 },
-      { id: 'ignis-1', family: 'IGNIS', model: 'IGNIS', style: '1.2L GLX (單色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 695000 },
-      { id: 'ignis-2', family: 'IGNIS', model: 'IGNIS', style: '1.2L GLX (Two-Tone 雙色)', cc: 1197, origin: '日本', energy: '油電複合(Hybrid)', price: 705000 },
-      { id: 'vitara-1', family: 'VITARA', model: 'VITARA', style: 'S 1.4L 2WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 940000 },
+      { id: 'vitara-1', family: 'VITARA', model: 'VITARA', style: 'S ALLGRIP 1.4L 4WD (Two-Tone 雙色）', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 1050000 },
       { id: 'vitara-2', family: 'VITARA', model: 'VITARA', style: 'S ALLGRIP 1.4L 4WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 1040000 },
+      { id: 'evitara-3', family: 'e-VITARA', model: 'e-VITARA', style: 'ALLGRIP-e 純電 4WD（Two-Tone 雙色', cc: 0, origin: '印度', energy: '純電(EV)', price: 1240000 },
       { id: 'scross-1', family: 'S-CROSS', model: 'S-CROSS', style: '1.4L 2WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 980000 },
-      { id: 'scross-2', family: 'S-CROSS', model: 'S-CROSS', style: 'ALLGRIP 1.4L 4WD', cc: 1373, origin: '匈牙利', energy: '油電複合(Hybrid)', price: 1140000 },
       { id: 'jimny-1', family: 'JIMNY', model: 'JIMNY', style: '1.5L GLX 4WD (單色)', cc: 1462, origin: '日本', energy: '汽油', price: 849000 },
       { id: 'jimny-2', family: 'JIMNY', model: 'JIMNY', style: '1.5L GLX 4WD (Two-Tone 雙色)', cc: 1462, origin: '日本', energy: '汽油', price: 859000 },
-      { id: 'carry-1', family: 'CARRY', model: 'CARRY', style: '1.5L 商用貨車', cc: 1462, origin: '印尼', energy: '汽油', price: 528000 },
+      { id: 'carry-1', family: 'CARRY', model: 'CARRY', style: '1.5L 商用貨車', cc: 1462, origin: '印尼', energy: '汽油', price: 499000 },
       { id: 'evitara-1', family: 'e-VITARA', model: 'e-VITARA', style: '純電 SUV 2WD', cc: 0, origin: '印度', energy: '純電(EV)', price: 1150000 },
-      { id: 'evitara-2', family: 'e-VITARA', model: 'e-VITARA', style: 'ALLGRIP-e 純電 4WD', cc: 0, origin: '印度', energy: '純電(EV)', price: 1250000 }
+      { id: 'evitara-2', family: 'e-VITARA', model: 'e-VITARA', style: 'ALLGRIP-e 純電 4WD', cc: 0, origin: '印度', energy: '純電(EV)', price: 1230000 }
     ];
 
     let currentSelectedMsrp = 0;
