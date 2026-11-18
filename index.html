@@ -20,7 +20,7 @@
     input[type="date"] {
       appearance: auto;
       -webkit-appearance: menulist-button;
-      min-height: 40px;
+      min-height: 42px;
       background-color: #ffffff;
       cursor: pointer;
     }
@@ -41,19 +41,17 @@
       padding: 8px 0 32px 0;
     }
 
-    /* =========================================================================
-       1:1 單張 A4 實體契約容器 (200mm x 284mm 精準高度配比，零裁切、零重疊)
-       ========================================================================= */
+    /* 單張 A4 1:1 實體契約容器 (200mm x 286mm 滿版) */
     #a4-contract-sheet {
       width: 200mm;
-      height: 284mm;
-      min-height: 284mm;
-      max-height: 284mm;
+      height: 286mm;
+      min-height: 286mm;
+      max-height: 286mm;
       background: #ffffff;
       color: #000000;
       font-family: "PMingLiU", "MingLiU", "BiauKai", "DFKai-SB", "Noto Serif TC", serif;
       box-sizing: border-box;
-      padding: 1.5mm 2mm;
+      padding: 1.8mm 2.2mm;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -64,36 +62,31 @@
       transform-origin: top left;
     }
 
-    /* 主體外框與右側獨立直書欄：徹底隔離不重疊 (修復紅框 3) */
     .a4-main-wrapper {
       display: flex;
       flex-direction: row;
       align-items: stretch;
-      justify-content: space-between;
       width: 100%;
       flex: 1;
       min-height: 0;
     }
 
+    /* 左側主表格區：預留右側 6mm 給直書欄，避免紅框3重疊 */
     .a4-left-body {
-      width: calc(100% - 6.2mm);
-      max-width: calc(100% - 6.2mm);
+      width: calc(100% - 6mm);
       display: flex;
       flex-direction: column;
-      border: 1.4px solid #000;
+      border: 1.5px solid #000;
       min-height: 0;
       box-sizing: border-box;
-      overflow: hidden;
     }
 
-    /* 右側直書注意事項：不使用 writing-mode，改用單字垂直置中堆疊，100% 不會向左偏移重疊表格 */
+    /* 右側直書注意事項欄：不使用 writing-mode 避免 Safari/iOS 列印偏移壓線 */
     .a4-right-sidebar {
       width: 5.2mm;
-      min-width: 5.2mm;
-      max-width: 5.2mm;
-      margin-left: 1mm;
-      font-size: 5.7pt;
-      line-height: 1.04;
+      margin-left: 0.8mm;
+      font-size: 5.6pt;
+      line-height: 1.03;
       color: #000;
       display: flex;
       flex-direction: column;
@@ -101,36 +94,34 @@
       align-items: center;
       text-align: center;
       user-select: none;
-      overflow: hidden;
       box-sizing: border-box;
       padding: 0.5mm 0;
     }
 
-    .a4-right-sidebar .v-char-col {
-      width: 4.4mm;
+    .a4-right-sidebar .v-text {
+      display: block;
+      width: 4.6mm;
       word-break: break-all;
-      white-space: normal;
+      line-height: 1.04;
       text-align: center;
-      line-height: 1.05;
     }
 
-    /* 表格高度精準控制：22 列總計約 96mm，釋放 140mm 給契約條款 (修復條款裁切) */
     .a4-table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      flex-shrink: 0;
     }
 
     .a4-table td, .a4-table th {
       border: 1px solid #000;
-      padding: 0.22mm 1mm;
-      font-size: 7.75pt;
-      line-height: 1.08;
+      padding: 0.25mm 1mm;
+      font-size: 7.9pt;
+      line-height: 1.1;
       vertical-align: middle;
       word-break: break-all;
       overflow: hidden;
-      height: 4.32mm;
+      height: 4.35mm;
+      box-sizing: border-box;
     }
 
     .a4-label {
@@ -140,16 +131,15 @@
       white-space: nowrap;
     }
 
-    /* 修復紅框 1 與紅框 2：直排標題改用標準水平置中 + <br> 換行，絕不偏右壓字 */
+    /* 直排表格欄位（修正紅框1、紅框2：不使用 writing-mode，改用單字換行置中，100%不偏移） */
     .a4-v-cell {
-      text-align: center !important;
-      vertical-align: middle !important;
+      text-align: center;
+      vertical-align: middle;
       font-weight: bold;
       background-color: #fafafa;
-      font-size: 7.2pt !important;
-      line-height: 1.12 !important;
-      padding: 0.5mm 0.2mm !important;
-      white-space: nowrap;
+      font-size: 7.2pt;
+      line-height: 1.08;
+      padding: 0.5mm 0 !important;
     }
 
     .a4-chk {
@@ -165,33 +155,25 @@
       vertical-align: middle;
     }
 
-    /* 契約條款雙欄設定：6.4pt / 行高 1.16，充裕容納第一至第十五條與第十四條個資簽名 */
+    /* 契約條款雙欄設定：精準控制字級與行高，確保第七、八、十四(簽名)、十五條完整顯示不裁切 */
     .a4-terms-container {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      column-gap: 2mm;
-      padding: 0.9mm 1.4mm;
+      gap: 2mm;
+      padding: 1mm 1.4mm;
       border-top: 1px solid #000;
-      font-size: 6.4pt;
+      font-size: 6.38pt;
       line-height: 1.165;
       text-align: justify;
       overflow: hidden;
       min-height: 0;
     }
 
-    .a4-term-col {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-      min-height: 0;
-    }
-
     .a4-term-item {
-      padding-left: 1.85em;
-      text-indent: -1.85em;
-      margin-bottom: 0.5px;
+      padding-left: 1.8em;
+      text-indent: -1.8em;
+      margin-bottom: 0.9px;
     }
 
     @media print {
@@ -204,10 +186,8 @@
         margin: 0 !important;
         padding: 0 !important;
         width: 200mm !important;
-        height: 284mm !important;
+        height: 286mm !important;
         overflow: hidden !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
       }
       .no-print {
         display: none !important;
@@ -229,10 +209,10 @@
       #a4-contract-sheet {
         border: none !important;
         box-shadow: none !important;
-        margin: 0 auto !important;
+        margin: 0 !important;
         width: 200mm !important;
-        height: 284mm !important;
-        max-height: 284mm !important;
+        height: 286mm !important;
+        max-height: 286mm !important;
         transform: none !important;
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
@@ -254,8 +234,11 @@
               <span id="modeBadge" class="text-[11px] bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded-full font-semibold">
                 💼 業務填單模式
               </span>
+              <span id="headerExpiryBadge" class="hidden text-[11px] bg-amber-500/20 text-amber-300 border border-amber-400/40 px-2 py-0.5 rounded-full font-mono font-bold">
+                ⏳ 24hr 效期倒數中
+              </span>
             </div>
-            <p class="text-[11px] text-slate-400">支援極簡短網址傳送 LINE ➔ 客戶確認填寫個資與簽名 ➔ 單張 A4 完美對齊</p>
+            <p class="text-[11px] text-slate-400">支援 24 小時限時短網址傳送 LINE ➔ 客戶確認填寫個資與簽名 ➔ 單張 A4 滿版匯出</p>
           </div>
         </div>
       </div>
@@ -305,8 +288,8 @@
     </div>
   </div>
 
-  <!-- 自訂清空確認視窗 -->
-  <div id="resetModal" class="fixed inset-0 bg-slate-900/70 z-50 hidden items-center justify-center p-4 no-print">
+  <!-- ==================== 確認清空彈出視窗 ==================== -->
+  <div id="resetConfirmModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 no-print">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-4">
       <h3 class="text-base font-black text-slate-900">確認清空重填？</h3>
       <p class="text-xs text-slate-600 leading-relaxed">這將會清除目前已填寫的買受人資料、配件與手寫簽名並重新產生單號。</p>
@@ -317,13 +300,73 @@
     </div>
   </div>
 
+  <!-- ==================== 專屬連結逾時失效 (24hr) / 防竄改鎖定全螢幕畫面 ==================== -->
+  <div id="expiredLockScreen" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden items-center justify-center p-4 no-print overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-red-200 space-y-5 text-center my-auto">
+      <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-3xl font-black shadow-inner">
+        ⏰
+      </div>
+      <div class="space-y-1.5">
+        <span id="expiredLockTag" class="inline-block bg-red-100 text-red-700 text-xs font-black px-3 py-1 rounded-full border border-red-200">
+          連結已逾 24 小時有效期限
+        </span>
+        <h2 id="expiredLockTitle" class="text-xl font-black text-slate-900">此專屬購車契約連結已失效</h2>
+        <p id="expiredLockDesc" class="text-xs text-slate-600 leading-relaxed">
+          為保障買賣雙方權益與車輛配額、優惠車價時效，本專屬訂單連結有效期限為 24 小時，目前已超過有效期限，無法檢視或簽署。
+        </p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left text-xs space-y-2">
+        <div class="text-slate-400 font-bold">📌 連結到期與服務據點資訊：</div>
+        <div class="flex justify-between border-b border-slate-200 pb-1.5">
+          <span class="text-slate-500">到期時間：</span>
+          <span id="expiredTimeDisplay" class="font-mono font-bold text-red-600">—</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-200 pb-1.5">
+          <span class="text-slate-500">服務營業所：</span>
+          <span id="expiredBranchDisplay" class="font-bold text-slate-800">勁順汽車 鳳山所</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-200 pb-1.5">
+          <span class="text-slate-500">專屬業務代表：</span>
+          <span id="expiredSalesDisplay" class="font-bold text-slate-800">專屬業代</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">營業所電話：</span>
+          <span id="expiredPhoneDisplay" class="font-mono font-bold text-blue-700">07-7666888</span>
+        </div>
+      </div>
+
+      <div class="space-y-2.5 pt-1">
+        <a id="expiredCallBtn" href="tel:07-7666888" class="block w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl text-sm shadow-lg transition">
+          📞 撥打營業所電話聯繫業務重新發送連結
+        </a>
+        <p class="text-[11px] text-slate-400">請透過 LINE 或電話聯繫您的專屬業務代表，索取最新有效之訂單簽署連結。</p>
+      </div>
+
+      <div class="pt-3 border-t border-slate-200">
+        <button type="button" onclick="document.getElementById('salesUnlockBox').classList.toggle('hidden')" class="text-xs text-slate-400 hover:text-slate-600 font-semibold underline">
+          🔐 業務人員重新產生連結 / 測試解鎖
+        </button>
+        <div id="salesUnlockBox" class="hidden mt-3 bg-slate-100 p-3 rounded-xl space-y-2 text-left">
+          <label class="block text-[11px] font-bold text-slate-600">請輸入業務解鎖通行碼（預設 8888）或直接點選解鎖：</label>
+          <div class="flex gap-2">
+            <input type="password" id="salesUnlockPin" value="8888" placeholder="8888" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono bg-white">
+            <button type="button" onclick="window.unlockExpiredOrderForSales()" class="shrink-0 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg">
+              解鎖並重發連結
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== 模式一：手機/平板觸控填單介面 ==================== -->
   <main id="mobile-form-container" class="max-w-4xl mx-auto p-3 md:p-5 space-y-4 no-print">
 
     <!-- 【客戶簽署模式專屬】頂部唯讀訂單確認卡 -->
     <section id="customerSummaryCard" class="hidden bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl shadow-lg border border-slate-700 p-4 md:p-5 space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700 pb-3">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
           <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-xs font-bold px-2.5 py-1 rounded-full">
             🔒 已由專屬業務設定鎖定，請檢視確認
           </span>
@@ -332,6 +375,17 @@
         <button type="button" onclick="window.setWorkflowMode('sales')" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-600 transition">
           🔓 業務解鎖修改
         </button>
+      </div>
+
+      <!-- 24 小時效期即時倒數提示橫幅 -->
+      <div id="customerExpiryBanner" class="hidden bg-amber-500/15 border border-amber-400/40 rounded-xl px-3.5 py-2.5 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+        <div class="flex items-center gap-2 text-amber-200 font-bold">
+          <span>⏳ 專屬連結有效期限倒數：</span>
+          <span id="custCountdownClock" class="font-mono text-sm text-amber-300 font-black tracking-wider">23小時 59分 59秒</span>
+        </div>
+        <div id="custExpiryDeadlineText" class="text-[11px] text-amber-200/80 font-mono">
+          到期時間：—（逾時連結自動失效）
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
@@ -829,12 +883,12 @@
     <section class="pt-2">
       <div id="salesBottomBar" class="bg-indigo-950 text-white rounded-2xl p-4 shadow-xl border border-indigo-800 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="text-xs space-y-0.5 text-center sm:text-left">
-          <div class="font-extrabold text-sm text-indigo-200">💼 業務端流程：填妥車型、車價與配件後，即可產生短網址傳給客戶簽名！</div>
-          <div class="text-slate-300">自動壓縮參數並產生短網址，LINE 點擊 100% 完整帶出車價與配件。</div>
+          <div class="font-extrabold text-sm text-indigo-200">💼 業務端流程：填妥車型、車價與配件後，即可產生 24hr 限時短網址傳給客戶簽名！</div>
+          <div class="text-slate-300">自動壓縮參數並產生短網址，超過 24 小時自動鎖定失效，保障報價權益。</div>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-2 w-full sm:w-auto shrink-0">
           <button type="button" onclick="window.openShareModal()" class="w-full sm:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl shadow-lg text-sm transition">
-            🔗 產生客戶簽署連結 (含短網址)
+            🔗 產生客戶簽署連結 (24hr 效期)
           </button>
           <button type="button" onclick="window.switchViewMode('a4')" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition">
             📄 預覽單張 A4
@@ -858,8 +912,8 @@
   </main>
 
   <!-- ==================== 產生客戶專屬簽署連結 彈出視窗 ==================== -->
-  <div id="shareModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 space-y-4">
+  <div id="shareModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 no-print overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 space-y-4 my-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-black text-slate-900">🔗 產生客戶專屬簽署短網址</h3>
         <button type="button" onclick="window.closeShareModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold px-2">✕</button>
@@ -870,12 +924,33 @@
         <div id="shareModalSummary" class="text-slate-600 space-y-1"></div>
       </div>
 
+      <!-- 連結有效期限設定 (預設 24 小時) -->
+      <div class="bg-amber-50/90 border border-amber-200 rounded-xl p-3 space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <label for="linkExpiryHoursSelect" class="text-xs font-bold text-amber-900 flex items-center gap-1">
+            ⏰ 連結有效期限設定（逾時自動鎖定無法開啟）：
+          </label>
+          <select id="linkExpiryHoursSelect" onchange="window.refreshShareModalLink()" class="bg-white border border-amber-300 rounded-lg px-2.5 py-1 text-xs font-bold text-amber-900 outline-none">
+            <option value="24" selected>24 小時（預設推薦）</option>
+            <option value="48">48 小時（2 天）</option>
+            <option value="72">72 小時（3 天）</option>
+            <option value="0">不限期</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-amber-800">
+          <span id="shareExpiryPreviewText">有效期限至：計算中...</span>
+          <button type="button" onclick="window.previewExpiredLockScreen()" class="text-red-600 hover:underline font-bold">
+            🧪 預覽「逾時失效鎖定畫面」
+          </button>
+        </div>
+      </div>
+
       <div class="space-y-1.5">
         <div class="flex items-center justify-between">
-          <label class="block text-xs font-bold text-slate-700">LINE 邀請訊息與專屬短網址（不會被 LINE 截斷）：</label>
+          <label class="block text-xs font-bold text-slate-700">LINE 邀請訊息與專屬短網址（含防竄改效期簽章）：</label>
           <span id="shortUrlStatus" class="text-[11px] font-bold text-emerald-600">⚡ 已啟用極簡壓縮參數</span>
         </div>
-        <textarea id="shareMessageText" rows="5" readonly class="w-full border border-slate-300 rounded-xl p-2.5 text-xs font-mono bg-slate-50 text-slate-700 resize-none"></textarea>
+        <textarea id="shareMessageText" rows="6" readonly class="w-full border border-slate-300 rounded-xl p-2.5 text-xs font-mono bg-slate-50 text-slate-700 resize-none"></textarea>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
@@ -900,7 +975,7 @@
   <div id="a4-preview-wrapper" class="hidden">
     <div class="max-w-4xl mx-auto px-3 pt-2 no-print">
       <div class="bg-slate-800 text-white text-xs rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow">
-        <span class="bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded">1:1 單張 A4 滿版預覽（已修復 3 處紅框對齊與條款簽名完整呈現）</span>
+        <span class="bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded">1:1 單張 A4 滿版預覽（已修正直排文字與條款簽名）</span>
         <div class="flex items-center gap-2">
           <button type="button" onclick="window.switchViewMode('form')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-lg font-bold">← 返回修改表單</button>
           <button type="button" onclick="window.triggerPrintA4()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-bold">🖨️ 立即列印 / 存為 PDF</button>
@@ -912,22 +987,22 @@
       <div id="a4-contract-sheet">
 
         <!-- 1. 契約書頂部大標題與資料編號框 -->
-        <div class="flex items-end justify-between mb-0.5 shrink-0" style="padding-right: 6.2mm;">
+        <div class="flex items-end justify-between mb-1" style="padding-right: 6mm;">
           <div class="w-28"></div>
-          <div class="text-center tracking-[0.28em] font-black" style="font-size: 18pt; line-height: 1.05;">
+          <div class="text-center tracking-[0.25em] font-black" style="font-size: 18pt; line-height: 1.05;">
             勁順汽車　汽車買賣契約書
           </div>
-          <table class="border-collapse border border-black" style="width: 47mm;">
+          <table class="border-collapse border border-black" style="width: 46mm;">
             <tr>
-              <td class="border border-black text-center font-bold py-0.5" style="font-size: 7.5pt; letter-spacing: 2px; height: 3.8mm;">資 料 編 號</td>
+              <td class="border border-black text-center font-bold py-0.5" style="font-size: 7.5pt; letter-spacing: 2px;">資 料 編 號</td>
             </tr>
             <tr>
-              <td id="a4-docNo" class="border border-black text-center font-mono font-bold py-0.5" style="font-size: 8.2pt; height: 4.5mm;"></td>
+              <td id="a4-docNo" class="border border-black text-center font-mono font-bold py-0.5" style="font-size: 8pt; height: 4.4mm;"></td>
             </tr>
           </table>
         </div>
 
-        <!-- 2. 契約主體外框 + 右側直書注意事項 (完全隔離不重疊) -->
+        <!-- 2. 契約主體外框 + 右側直書注意事項 (修正紅框3：獨立寬度不重疊) -->
         <div class="a4-main-wrapper">
           <div class="a4-left-body">
 
@@ -1104,15 +1179,15 @@
               </tbody>
             </table>
 
-            <!-- 中段三欄：委辦保險 / 配件加裝 / 其他約定事項 (修復紅框 1 與紅框 2，改用 <br> 垂直堆疊，100% 置中不壓線) -->
+            <!-- 中段三欄：委辦保險 / 配件加裝 / 其他約定事項 (修正紅框1、紅框2：使用 <br> 直排置中，絕不跑位) -->
             <table class="a4-table" style="border-top: none;">
               <colgroup>
-                <col style="width: 5.2%;">
-                <col style="width: 33.8%;">
-                <col style="width: 4.8%;">
-                <col style="width: 23.2%;">
+                <col style="width: 4.5%;">
+                <col style="width: 33.5%;">
+                <col style="width: 4.5%;">
+                <col style="width: 23.5%;">
                 <col style="width: 10%;">
-                <col style="width: 23%;">
+                <col style="width: 24%;">
               </colgroup>
               <tbody>
                 <tr>
@@ -1120,7 +1195,7 @@
                     買<br>受<br>人<br>委<br>辦<br>車<br>輛<br>保<br>險<br>事<br>項
                   </td>
                   <td class="a4-label" style="border-top: none;">投 保 種 類</td>
-                  <td rowspan="6" class="a4-v-cell" style="border-top: none; line-height: 1.45 !important;">
+                  <td rowspan="6" class="a4-v-cell" style="border-top: none; line-height: 1.5;">
                     配<br>件<br>加<br>裝
                   </td>
                   <td class="a4-label" style="border-top: none;">品 名 ／ 規 格</td>
@@ -1133,7 +1208,7 @@
                   </td>
                   <td>1. <span id="a4-accName1"></span></td>
                   <td id="a4-accPrice1" class="text-right font-mono"></td>
-                  <td rowspan="6" id="a4-otherAgreements" style="vertical-align: top; white-space: pre-wrap; padding: 1mm; font-size: 7.6pt; line-height: 1.18;"></td>
+                  <td rowspan="6" id="a4-otherAgreements" style="vertical-align: top; white-space: pre-wrap; padding: 1mm; font-size: 7.5pt; line-height: 1.18;"></td>
                 </tr>
                 <tr>
                   <td>
@@ -1172,7 +1247,7 @@
                   <td>
                     <div class="flex items-center justify-between">
                       <span>入款型態：<span id="a4-insPayCash" class="a4-chk"></span>現金 <span id="a4-insPayCheck" class="a4-chk"></span>支票</span>
-                      <span id="a4-insPayDate" style="font-size: 7pt;">入款日期： 年 月 日</span>
+                      <span id="a4-insPayDate" style="font-size: 6.8pt;">入款日期： 年 月 日</span>
                     </div>
                   </td>
                   <td colspan="2" class="text-center font-bold">配件加裝費用合計</td>
@@ -1181,9 +1256,9 @@
               </tbody>
             </table>
 
-            <!-- 下半部：第一至第十五條完整契約條款（雙欄對齊，完全不裁切第七、八、十四、十五條） -->
+            <!-- 下半部：第一至第十五條完整契約條款（雙欄對齊，完整顯示第七、八、十四簽名與十五條） -->
             <div class="a4-terms-container">
-              <div class="a4-term-col">
+              <div>
                 <div class="a4-term-item"><strong>一、契約之生效：</strong>本契約書經買受人與出賣人及經手人簽章，並經買受人交付訂金由出賣人收訖現金或票據兌現後始生效力。本契約書生效後，非經雙方另以書面簽章外，任何一方不得轉讓及(或)典當本契約之一切權利義務。另有關本契約書增刪修改，應由雙方以書面為之。</div>
                 <div class="a4-term-item"><strong>二、標的物規格、顏色之變更或停止供應：</strong>本契約標的物之車色，非經他方同意，契約當事人任何一方不得要求變更規格、顏色或配件。本契約標的物之車輛因供應廠商改款、變更或停止供應，致出賣人不能依原約定車型交車，出賣人應即通知買受人，買受人得解除契約，請求返還已付價金，及自受領日起至返還日止依法定利率計算之利息。但買受人亦得不解除契約而依出賣人所定價格標準核算買賣價金，並受領改款或變更後之標的物者，出賣人不得拒絕。</div>
                 <div class="a4-term-item"><strong>三、匯率與關稅等之變動：</strong>訂購已進口之汽車或國產汽車時，本契約書所載之價金，除另有約定外，已包括進口關稅、商港建設費、貨物稅、營業稅、交車前之運費、運送保險費及其他應由出賣人負擔之稅費；但不包括申請牌照手續費、車輛保險費、監理規費、使用牌照稅及燃料費等應由買受人負擔之各項稅費及費用。本契約簽訂後，上述稅費如有調整，其利益或不利益均歸買受人承受及負擔，但可歸責於出賣人之事由致增加負擔者，其增加部份由出賣人負擔。如訂購尚未進口之汽車時，出賣人之進口成本確有調高或調低，概依本契約書所訂之價格為準，但匯率、關稅、商港建設費等稅費於結匯完納之日有調高或調低者，一律以實際結匯之匯率、稅率為準計算價金，其因可歸責於出賣人之事由延宕而未辦理結匯手續，致蒙受較高稅率或較高匯率之不利益者，其提高部份由出賣人負擔。</div>
@@ -1194,42 +1269,44 @@
                 <div class="a4-term-item"><strong>八、因標的物重大瑕疵之解約或更換新車：</strong>交車後一百八十天內或行駛一萬二千公里之內(以先到者為準)，若發生下列重大瑕疵情事之一，經雙方同意之專業機構鑑定或由買受人逕行委託經中央主管機關公告之專業機構鑑定，鑑定結果證實係因標的物瑕疵所致，而非買受人及(或)車輛使用者之故意或過失所致者，出賣人除應負擔鑑定費用外，並應依買受人之請求更換同型新車(或等值新車)予買受人；或依買受人之請求而解除本契約並返</div>
               </div>
 
-              <div class="a4-term-col">
-                <div>還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)於行駛時突然起火燃燒者 (二)於行駛時煞車失靈，經送出賣人或原廠維修二次而未修復者 (三)於行駛時突然熄火故障，經送出賣人或原廠維修二次而未修復者 (四)於排檔或行駛時發生暴衝，經送出賣人或原廠維修二次而未修復者 (五)於行駛時引擎溫度升高至極限，經送出賣人或原廠維修二次而未修復者 (六)其他重大瑕疵，有危害生命安全或身體健康之虞，經送出賣人或原廠維修二次而未修復者。</div>
-                <div class="a4-term-item"><strong>九、標的物屢修不復之效果：</strong>若發生下列情事之一，出賣人應依買受人之請求更換同型(或等值)新車予買受人，或依買受人之請求而解除本契約書並退還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)交車後一百八十天內或行駛一萬二千公里之內(以先到者為準)，因相同瑕疵經送修出賣人或原廠檢修四次而無法回復正常機能者。(二)交車後一百八十天之內，因機能瑕疵所致無法正常使用車輛，經出賣人檢修，其累積無法使用日數達三十日以上。但有下列情形之一者，期間不予累計：1.買受人未依通知取車之期間。2.回廠維修已提供買受人代步車或補償相當代步費用之合理期間。前項規定並不妨害消費者依法律或業者之保固所得主張之權利。</div>
-                <div class="a4-term-item"><strong>十、保證書及使用說明書：</strong>出售產品者應訂約後，至遲於交車時，交付標的物之中文保證書及中文使用說明書，但中文使用說明書得以買受人同意之方式提供。前項使用說明書應包含下列事項：(一)標的物組件、功能說明 (二)正確使用方法 (三)操作程序 (四)危險警語與避免方式(例如：禁止改裝、加裝) (五)簡易故障處理 (六)維修服務處所及其他相關資訊。本買賣標的物性質上或使用上有危害人體健康、生命安全之虞者，應於保證書或使用說明書以醒目之字體或圖樣標明。</div>
-                <div class="a4-term-item"><strong>十一、</strong>除本契約另有約定外，買受人得以書面通知出賣人將由本契約所生之債權讓與第三人，並由第三人負擔其債務，但買受人仍應負連帶給付之責，但如因第三人資力明顯不足或其他非可歸責於出賣人之事由者致無法轉讓者，不在此限。</div>
-                <div class="a4-term-item"><strong>十二、</strong>因不可歸責於雙方當事人之事由，致給付不能者，出賣人應返還買受人已付之價金，及自受領日起至返還日止依法定利率計算之利息。</div>
-                <div class="a4-term-item"><strong>十三、代辦義務及手續費用：</strong>買受人得委任出賣人代辦申請牌照及動產擔保交易登記等手續，出賣人不得拒絕，但出賣人得複委任他人辦理，除有特別約定者外，政府規費及代辦費用由買受人負擔。</div>
-                <div class="a4-term-item"><strong>十四、對於買受人為購買本契約標的物之車輛所提供之個人資料，買受人瞭解且同意如下：</strong>(一)買受人之個人資料係由出賣人及SUZUKI台灣總代理金鈴汽車股份有限公司(下稱「金鈴汽車」)所分別蒐集，基於履行本契約、維修保養服務、辦理購車貸款與保險、保險理賠、事故處理、拖吊服務、客戶關懷服務及行銷等目的，出賣人與金鈴汽車得於中華民國境內，分別蒐集、處理及利用買受人於買賣契約中所提供之個人資料，於上述目的之必要期間內，出賣人及金鈴汽車將保有及利用買受人之相關個人資料。(二)買受人同意基於上述目的之必要，出賣人及金鈴汽車得分別委託其關係企業、金鈴汽車授權之總經銷商及經銷商、或其他與出賣人及金鈴汽車簽約之合作廠商，就上開個人資料予以處理、利用或再為蒐集。(三)買受人瞭解在符合個人資料保護相關法令規定下，其得向出賣人或金鈴汽車請求閱覽、補充、更正、停止蒐集、處理或利用，或刪除其個人資料，或請求提供該等資料之複製本。(四)買受人瞭解如其不願提供上開個人資料，或要求出賣人或金鈴汽車停止處理、利用或刪除其個人資料，可能導致上述部分或全部之目的無法完成，而對買受人之權益有所影響。</div>
+              <div class="flex flex-col justify-between">
+                <div>
+                  <div style="margin-bottom: 0.9px;">還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)於行駛時突然起火燃燒者 (二)於行駛時煞車失靈，經送出賣人或原廠維修二次而未修復者 (三)於行駛時突然熄火故障，經送出賣人或原廠維修二次而未修復者 (四)於排檔或行駛時發生暴衝，經送出賣人或原廠維修二次而未修復者 (五)於行駛時引擎溫度升高至極限，經送出賣人或原廠維修二次而未修復者 (六)其他重大瑕疵，有危害生命安全或身體健康之虞，經送出賣人或原廠維修二次而未修復者。</div>
+                  <div class="a4-term-item"><strong>九、標的物屢修不復之效果：</strong>若發生下列情事之一，出賣人應依買受人之請求更換同型(或等值)新車予買受人，或依買受人之請求而解除本契約書並退還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)交車後一百八十天內或行駛一萬二千公里之內(以先到者為準)，因相同瑕疵經送修出賣人或原廠檢修四次而無法回復正常機能者。(二)交車後一百八十天之內，因機能瑕疵所致無法正常使用車輛，經出賣人檢修，其累積無法使用日數達三十日以上。但有下列情形之一者，期間不予累計：1.買受人未依通知取車之期間。2.回廠維修已提供買受人代步車或補償相當代步費用之合理期間。前項規定並不妨害消費者依法律或業者之保固所得主張之權利。</div>
+                  <div class="a4-term-item"><strong>十、保證書及使用說明書：</strong>出售產品者應訂約後，至遲於交車時，交付標的物之中文保證書及中文使用說明書，但中文使用說明書得以買受人同意之方式提供。前項使用說明書應包含下列事項：(一)標的物組件、功能說明 (二)正確使用方法 (三)操作程序 (四)危險警語與避免方式(例如：禁止改裝、加裝) (五)簡易故障處理 (六)維修服務處所及其他相關資訊。本買賣標的物性質上或使用上有危害人體健康、生命安全之虞者，應於保證書或使用說明書以醒目之字體或圖樣標明。</div>
+                  <div class="a4-term-item"><strong>十一、</strong>除本契約另有約定外，買受人得以書面通知出賣人將由本契約所生之債權讓與第三人，並由第三人負擔其債務，但買受人仍應負連帶給付之責，但如因第三人資力明顯不足或其他非可歸責於出賣人之事由者致無法轉讓者，不在此限。</div>
+                  <div class="a4-term-item"><strong>十二、</strong>因不可歸責於雙方當事人之事由，致給付不能者，出賣人應返還買受人已付之價金，及自受領日起至返還日止依法定利率計算之利息。</div>
+                  <div class="a4-term-item"><strong>十三、代辦義務及手續費用：</strong>買受人得委任出賣人代辦申請牌照及動產擔保交易登記等手續，出賣人不得拒絕，但出賣人得複委任他人辦理，除有特別約定者外，政府規費及代辦費用由買受人負擔。</div>
+                  <div class="a4-term-item"><strong>十四、對於買受人為購買本契約標的物之車輛所提供之個人資料，買受人瞭解且同意如下：</strong>(一)買受人之個人資料係由出賣人及SUZUKI台灣總代理金鈴汽車股份有限公司(下稱「金鈴汽車」)所分別蒐集，基於履行本契約、維修保養服務、辦理購車貸款與保險、保險理賠、事故處理、拖吊服務、客戶關懷服務及行銷等目的，出賣人與金鈴汽車得於中華民國境內，分別蒐集、處理及利用買受人於買賣契約中所提供之個人資料，於上述目的之必要期間內，出賣人及金鈴汽車將保有及利用買受人之相關個人資料。(二)買受人同意基於上述目的之必要，出賣人及金鈴汽車得分別委託其關係企業、金鈴汽車授權之總經銷商及經銷商、或其他與出賣人及金鈴汽車簽約之合作廠商，就上開個人資料予以處理、利用或再為蒐集。(三)買受人瞭解在符合個人資料保護相關法令規定下，其得向出賣人或金鈴汽車請求閱覽、補充、更正、停止蒐集、處理或利用，或刪除其個人資料，或請求提供該等資料之複製本。(四)買受人瞭解如其不願提供上開個人資料，或要求出賣人或金鈴汽車停止處理、利用或刪除其個人資料，可能導致上述部分或全部之目的無法完成，而對買受人之權益有所影響。</div>
+                </div>
 
-                <!-- 第十四條個資同意簽名欄 (高度固定、絕不裁切) -->
-                <div class="relative py-0.5 flex items-end justify-between border-b border-dotted border-black shrink-0" style="min-height: 7.8mm;">
-                  <div class="font-bold" style="font-size: 6.35pt; line-height: 1.12; width: 64%;">
-                    買受人已充份了解出賣人及金鈴汽車將如何使用個人資料及買受人就其提供個人資料之相關權益，基此，同意本條約定並提供個人資料。　<strong>(簽名蓋章)</strong>
+                <!-- 第十四條買受人個資同意簽名欄 -->
+                <div class="relative py-0.5 my-0.5 flex items-center justify-between border-b border-dotted border-black" style="min-height: 8.5mm;">
+                  <div class="font-bold" style="font-size: 6.3pt; line-height: 1.12; width: 62%;">
+                    買受人已充份了解出賣人及金鈴汽車將如何使用個人資料及買受人就其提供個人資料之相關權益，基此，同意本條約定並提供個人資料。　　<strong>(簽名蓋章)</strong>
                   </div>
-                  <div class="relative flex-1 h-7 flex items-center justify-center">
-                    <img id="a4SigPrivacyImg" alt="" class="max-h-7 max-w-full object-contain hidden">
+                  <div class="relative flex-1 h-8 flex items-center justify-center">
+                    <img id="a4SigPrivacyImg" alt="" class="max-h-8 max-w-full object-contain hidden">
                   </div>
                 </div>
 
-                <div class="a4-term-item shrink-0"><strong>十五、</strong>本訂購合約如有未盡事宜，雙方應本誠實原則協商處理，如有爭議而無法協商處理時，雙方同意以出賣人營業所所在地之地方法院為第一審管轄法院。</div>
+                <div class="a4-term-item"><strong>十五、</strong>本訂購合約如有未盡事宜，雙方應本誠實原則協商處理，如有爭議而無法協商處理時，雙方同意以出賣人營業所所在地之地方法院為第一審管轄法院。</div>
               </div>
             </div>
 
           </div>
 
-          <!-- 右側獨立直書注意事項欄 (修復紅框 3：使用單字垂直堆疊，100% 獨立在表格右框線外，絕不重疊 c.c. 與業代確認) -->
+          <!-- 右側垂直注意事項欄 (修正紅框3：單欄直排置中，絕不壓左側表格框線) -->
           <div class="a4-right-sidebar">
-            <div class="v-char-col font-bold">第<br>一<br>聯<br>：<br>客<br>戶<br>聯</div>
-            <div class="v-char-col">1.<br>本<br>公<br>司<br>不<br>承<br>做<br>舊<br>車<br>換<br>新<br>車<br>業<br>務<br>，<br>即<br>買<br>賣<br>舊<br>車<br>之<br>風<br>險<br>，<br>若<br>有<br>任<br>何<br>糾<br>紛<br>及<br>權<br>益<br>問<br>題<br>，<br>恕<br>無<br>法<br>協<br>助<br>處<br>理<br>。</div>
-            <div class="v-char-col">2.<br>車<br>款<br>敬<br>請<br>以<br>電<br>匯<br>匯<br>入<br>本<br>公<br>司<br>所<br>指<br>定<br>之<br>銀<br>行<br>帳<br>戶<br>。</div>
-            <div class="v-char-col">3.<br>開<br>立<br>即<br>期<br>支<br>票<br>者<br>，<br>敬<br>請<br>指<br>名<br>抬<br>頭<br>並<br>禁<br>止<br>背<br>書<br>轉<br>讓<br>。</div>
+            <span class="v-text font-bold">第一聯：客戶聯</span>
+            <span class="v-text">1.本公司不承做舊車換新車業務，即買賣舊車之風險，若有任何糾紛及權益問題，恕無法協助處理。</span>
+            <span class="v-text">2.車款敬請以電匯匯入本公司所指定之銀行帳戶。</span>
+            <span class="v-text">3.開立即期支票者，敬請指名抬頭並禁止背書轉讓。</span>
           </div>
         </div>
 
         <!-- 3. 底部買賣雙方簽署區與中華民國日期 -->
-        <div class="pt-0.5 shrink-0" style="padding-right: 6.2mm; font-size: 8pt; line-height: 1.2;">
+        <div class="pt-1" style="padding-right: 6mm; font-size: 8.1pt; line-height: 1.22;">
           <div class="font-bold">
             買受人茲聲明，其已被給予三天以上之期間審閱本契約之內容，並同意以上所有之約款。<br>
             本契約書一式四份，由買受人執一份，出賣人執二份及出賣人之銷售業務代表執一份為憑。
@@ -1240,12 +1317,12 @@
               <div class="flex items-center">
                 <span class="font-bold">買受人：</span>
                 <span id="a4-footerBuyerName" class="font-bold mr-2"></span>
-                <span class="text-[7.5pt] text-neutral-600">(簽名蓋章)</span>
+                <span class="text-xs text-neutral-600">(簽名蓋章)</span>
               </div>
               <div><span class="font-bold">地　址：</span><span id="a4-footerBuyerAddress"></span></div>
               <div><span class="font-bold">電　話：</span><span id="a4-footerBuyerTel"></span></div>
               <div><span class="font-bold">營利事業或身分證統一編號：</span><span id="a4-footerBuyerId" class="font-mono"></span></div>
-              <img id="a4SigBuyerImg" alt="" class="absolute left-28 -top-1 h-12 max-w-[52mm] object-contain pointer-events-none hidden">
+              <img id="a4SigBuyerImg" alt="" class="absolute left-28 -top-1 h-14 max-w-[55mm] object-contain pointer-events-none hidden">
             </div>
 
             <div class="col-span-6 space-y-0.5">
@@ -1255,7 +1332,7 @@
               <div><span class="font-bold">地　址：</span><span id="a4-sellerAddress"></span></div>
               <div class="flex items-center justify-between">
                 <span><span class="font-bold">電　話：</span><span id="a4-sellerPhone"></span></span>
-                <span><span class="font-bold">銷售業務代表：</span><span id="a4-salesRepName" class="font-bold"></span> <span style="font-size: 7pt;">(簽名蓋章)</span></span>
+                <span><span class="font-bold">銷售業務代表：</span><span id="a4-salesRepName" class="font-bold"></span> <span style="font-size: 6.8pt;">(簽名蓋章)</span></span>
               </div>
             </div>
           </div>
@@ -1298,6 +1375,9 @@
     let currentOfficialPrice = 0;
     let isSingleColorRestricted = false;
     let currentWorkflowMode = 'sales';
+    let currentLinkExpiryEpochSec = 0;
+    let expiryCountdownTimer = null;
+    let isOrderExpiredLocked = false;
 
     function setElText(id, text) {
       const el = document.getElementById(id);
@@ -1322,7 +1402,7 @@
       inner.className = `${bgClass} text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center justify-between`;
       text.textContent = msg;
       toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 4000);
+      setTimeout(() => toast.classList.add('hidden'), 4500);
     };
 
     window.generateNewDocNo = function() {
@@ -1690,7 +1770,7 @@
       if (!sheet || !viewport) return;
       const vw = Math.min(window.innerWidth, document.documentElement.clientWidth || window.innerWidth);
       const sheetPxWidth = 756;
-      const sheetPxHeight = 1074;
+      const sheetPxHeight = 1081;
 
       if (vw < sheetPxWidth + 24) {
         const scale = (vw - 16) / sheetPxWidth;
@@ -1705,6 +1785,10 @@
     };
 
     window.triggerPrintA4 = function() {
+      if (isOrderExpiredLocked) {
+        window.showToast('⚠️ 此專屬連結已超過 24 小時有效期限，無法列印或匯出。', 'bg-red-600');
+        return;
+      }
       window.syncA4();
       const sheet = document.getElementById('a4-contract-sheet');
       const prevTransform = sheet ? sheet.style.transform : '';
@@ -1721,15 +1805,136 @@
       }, 150);
     };
 
-    /* ==================== 極簡 URL 壓縮編碼與解碼（不會被 LINE 截斷） ==================== */
-    function buildCompactShareUrl() {
+    /* ==================== 24 小時連結效期與防竄改簽章機制 ==================== */
+    function computeOrderSignature(expBase36, priceStr, modelIdxOrName, branchIdxStr) {
+      const raw = `JS2026|${expBase36}|${priceStr || '0'}|${modelIdxOrName || ''}|${branchIdxStr || '0'}|SUZUKI`;
+      let h = 2166136261;
+      for (let i = 0; i < raw.length; i++) {
+        h ^= raw.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(36);
+    }
+
+    function formatDateTimeFull(epochSec) {
+      const d = new Date(epochSec * 1000);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mi = String(d.getMinutes()).padStart(2, '0');
+      return `${yyyy}/${mm}/${dd} ${hh}:${mi}`;
+    }
+
+    function startExpiryCountdown(expiryEpochSec) {
+      if (expiryCountdownTimer) clearInterval(expiryCountdownTimer);
+      currentLinkExpiryEpochSec = expiryEpochSec;
+
+      const banner = document.getElementById('customerExpiryBanner');
+      const headerBadge = document.getElementById('headerExpiryBadge');
+      const clockEl = document.getElementById('custCountdownClock');
+      const deadlineEl = document.getElementById('custExpiryDeadlineText');
+
+      if (!expiryEpochSec || expiryEpochSec <= 0) {
+        if (banner) banner.classList.add('hidden');
+        if (headerBadge) headerBadge.classList.add('hidden');
+        return;
+      }
+
+      const deadlineStr = formatDateTimeFull(expiryEpochSec);
+      if (deadlineEl) deadlineEl.textContent = `到期時間：${deadlineStr}（逾時連結自動失效）`;
+      if (banner) banner.classList.remove('hidden');
+      if (headerBadge) headerBadge.classList.remove('hidden');
+
+      function tick() {
+        const nowSec = Math.floor(Date.now() / 1000);
+        const remain = expiryEpochSec - nowSec;
+        if (remain <= 0) {
+          clearInterval(expiryCountdownTimer);
+          window.showExpiredLockScreen(expiryEpochSec, 'expired');
+          return;
+        }
+        const hrs = Math.floor(remain / 3600);
+        const mins = Math.floor((remain % 3600) / 60);
+        const secs = remain % 60;
+        const timeText = `${hrs}小時 ${String(mins).padStart(2, '0')}分 ${String(secs).padStart(2, '0')}秒`;
+        if (clockEl) clockEl.textContent = timeText;
+        if (headerBadge) headerBadge.textContent = `⏳ 剩餘效期 ${hrs}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+
+      tick();
+      expiryCountdownTimer = setInterval(tick, 1000);
+    }
+
+    window.showExpiredLockScreen = function(expiryEpochSec, reason = 'expired') {
+      isOrderExpiredLocked = true;
+      const lockScreen = document.getElementById('expiredLockScreen');
+      const tagEl = document.getElementById('expiredLockTag');
+      const titleEl = document.getElementById('expiredLockTitle');
+      const descEl = document.getElementById('expiredLockDesc');
+
+      if (reason === 'tampered') {
+        if (tagEl) tagEl.textContent = '⚠️ 連結效期或參數驗證異常';
+        if (titleEl) titleEl.textContent = '此專屬購車契約連結無效或已過期';
+        if (descEl) descEl.textContent = '系統偵測到此連結的效期簽章不符或連結已被截斷修改。請聯繫您的專屬業務代表重新發送最新訂單連結。';
+        setElText('expiredTimeDisplay', '效期驗證失敗');
+      } else {
+        if (tagEl) tagEl.textContent = '⏰ 連結已逾 24 小時有效期限';
+        if (titleEl) titleEl.textContent = '此專屬購車契約連結已逾時失效';
+        if (descEl) descEl.textContent = '為保障買賣雙方權益與車輛配額、優惠車價時效，本專屬訂單連結有效期限已屆滿，目前無法檢視或簽署。';
+        setElText('expiredTimeDisplay', expiryEpochSec ? formatDateTimeFull(expiryEpochSec) : '已超過有效期限');
+      }
+
+      const bInfo = BRANCH_DEFAULTS[currentBranch] || BRANCH_DEFAULTS['鳳山所'];
+      const salesName = getElVal('salesRepName') || '勁順汽車專屬業代';
+      setElText('expiredBranchDisplay', `勁順汽車 ${currentBranch}`);
+      setElText('expiredSalesDisplay', salesName);
+      setElText('expiredPhoneDisplay', bInfo.phone);
+
+      const callBtn = document.getElementById('expiredCallBtn');
+      if (callBtn) callBtn.href = `tel:${bInfo.phone}`;
+
+      if (lockScreen) {
+        lockScreen.classList.remove('hidden');
+        lockScreen.classList.add('flex');
+      }
+    };
+
+    window.previewExpiredLockScreen = function() {
+      window.closeShareModal();
+      const samplePastSec = Math.floor(Date.now() / 1000) - 600;
+      window.showExpiredLockScreen(samplePastSec, 'expired');
+    };
+
+    window.unlockExpiredOrderForSales = function() {
+      const pin = getElVal('salesUnlockPin').trim();
+      if (pin !== '8888' && pin !== '') {
+        window.showToast('⚠️ 業務通行碼錯誤（預設為 8888）', 'bg-red-600');
+        return;
+      }
+      isOrderExpiredLocked = false;
+      if (expiryCountdownTimer) clearInterval(expiryCountdownTimer);
+      const lockScreen = document.getElementById('expiredLockScreen');
+      if (lockScreen) {
+        lockScreen.classList.add('hidden');
+        lockScreen.classList.remove('flex');
+      }
+      const headerBadge = document.getElementById('headerExpiryBadge');
+      if (headerBadge) headerBadge.classList.add('hidden');
+      window.setWorkflowMode('sales');
+      window.showToast('🔓 已由業務端解鎖！您可重新產生新的 24 小時有效連結。', 'bg-emerald-600');
+    };
+
+    /* ==================== 極簡 URL 壓縮編碼與解碼（不會被 LINE 截斷 + 24hr 效期） ==================== */
+    function buildCompactShareUrl(expiryHours = 24) {
       const params = new URLSearchParams();
       params.set('m', 'c');
 
-      const bIdx = BRANCH_CODES.indexOf(currentBranch);
-      if (bIdx >= 0) params.set('b', String(bIdx));
+      const bIdx = Math.max(0, BRANCH_CODES.indexOf(currentBranch));
+      params.set('b', String(bIdx));
 
       const vIdx = getElVal('quickVehicleSelect');
+      const modelIdentifier = vIdx !== '' ? vIdx : getElVal('carModel');
       if (vIdx !== '') {
         params.set('v', vIdx);
       } else {
@@ -1743,7 +1948,9 @@
       if (getElVal('carColor')) params.set('cl', getElVal('carColor'));
       if (getElVal('carQty') && getElVal('carQty') !== '1') params.set('q', getElVal('carQty'));
       if (getElVal('carYear') && getElVal('carYear') !== '2026 / 2026') params.set('cy', getElVal('carYear'));
-      if (getElVal('vehiclePrice')) params.set('p', getElVal('vehiclePrice'));
+
+      const priceStr = getElVal('vehiclePrice') || '0';
+      if (getElVal('vehiclePrice')) params.set('p', priceStr);
       if (getElVal('depositAmount')) params.set('dp', getElVal('depositAmount'));
       if (getRadioVal('depositType') !== '現金') params.set('dt', getRadioVal('depositType'));
       if (getRadioVal('balanceType') !== '現金支付') params.set('bt', getRadioVal('balanceType'));
@@ -1782,8 +1989,20 @@
       if (getElVal('buyerId')) params.set('bi', getElVal('buyerId'));
       if (getElVal('buyerAddress')) params.set('ba', getElVal('buyerAddress'));
 
+      let expEpochSec = 0;
+      if (expiryHours > 0) {
+        expEpochSec = Math.floor(Date.now() / 1000) + Math.round(expiryHours * 3600);
+        const expBase36 = expEpochSec.toString(36);
+        const sig = computeOrderSignature(expBase36, priceStr, modelIdentifier, String(bIdx));
+        params.set('exp', expBase36);
+        params.set('k', sig);
+      }
+
       const baseUrl = window.location.href.split('?')[0].split('#')[0];
-      return `${baseUrl}?${params.toString()}`;
+      return {
+        url: `${baseUrl}?${params.toString()}`,
+        expEpochSec
+      };
     }
 
     function restoreFromUrlParams() {
@@ -1792,10 +2011,13 @@
         if (!searchStr) return;
         const params = new URLSearchParams(searchStr);
 
+        const bIdxStr = params.get('b') || '1';
         if (params.has('b')) {
-          const bName = BRANCH_CODES[parseInt(params.get('b'), 10)];
+          const bName = BRANCH_CODES[parseInt(bIdxStr, 10)];
           if (bName) window.selectBranch(bName);
         }
+        if (params.has('sr')) setElVal('salesRepName', params.get('sr'));
+
         if (params.has('v')) {
           window.applyVehicleByIndex(params.get('v'));
         } else {
@@ -1816,7 +2038,6 @@
 
         if (params.has('dn')) setElVal('docNo', params.get('dn'));
         if (params.has('dd')) setElVal('deliveryDate', params.get('dd'));
-        if (params.has('sr')) setElVal('salesRepName', params.get('sr'));
         if (params.has('rp')) setElVal('sellerRep', params.get('rp'));
 
         if (params.has('im')) {
@@ -1859,6 +2080,28 @@
         if (params.get('m') === 'c' || params.get('mode') === 'customer') {
           window.setWorkflowMode('customer');
         }
+
+        if (params.has('exp')) {
+          const expBase36 = params.get('exp');
+          const expEpochSec = parseInt(expBase36, 36);
+          const providedSig = params.get('k') || '';
+          const priceStr = params.get('p') || getElVal('vehiclePrice') || '0';
+          const modelId = params.has('v') ? params.get('v') : (params.get('cm') || '');
+          const expectedSig = computeOrderSignature(expBase36, priceStr, modelId, bIdxStr);
+
+          if (!expEpochSec || isNaN(expEpochSec) || (providedSig && providedSig !== expectedSig)) {
+            window.showExpiredLockScreen(0, 'tampered');
+            return;
+          }
+
+          const nowSec = Math.floor(Date.now() / 1000);
+          if (nowSec >= expEpochSec) {
+            window.showExpiredLockScreen(expEpochSec, 'expired');
+            return;
+          }
+
+          startExpiryCountdown(expEpochSec);
+        }
       } catch (e) {
         console.error('URL decode error:', e);
       }
@@ -1866,30 +2109,47 @@
 
     window.openShareModal = async function() {
       window.syncA4();
-      const longUrl = buildCompactShareUrl();
+      const modal = document.getElementById('shareModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      await window.refreshShareModalLink();
+    };
+
+    window.refreshShareModalLink = async function() {
+      const hoursSelect = document.getElementById('linkExpiryHoursSelect');
+      const expiryHours = hoursSelect ? parseInt(hoursSelect.value, 10) : 24;
+      const { url: longUrl, expEpochSec } = buildCompactShareUrl(expiryHours);
+
       const model = `${getElVal('carModel') || 'SUZUKI'} ${getElVal('carStyle') || ''}`.trim();
       const color = getElVal('carColor') || '指定車色';
       const price = (parseInt(getElVal('vehiclePrice'), 10) || 0).toLocaleString();
       const sales = getElVal('salesRepName') || '專屬業代';
 
+      const expiryText = expEpochSec > 0
+        ? `${formatDateTimeFull(expEpochSec)}（${expiryHours} 小時內有效，逾時自動失效）`
+        : '不限期';
+
+      setElText('shareExpiryPreviewText', `有效期限至：${expiryText}`);
+
       document.getElementById('shareModalSummary').innerHTML = `
         <div>• <strong>服務據點 / 業代：</strong>${currentBranch} / ${sales}</div>
         <div>• <strong>訂購車型 / 車色：</strong>${model} (${color})</div>
         <div>• <strong>成交車價：</strong>NT$ ${price} 元整</div>
+        <div class="text-amber-700 font-bold">• <strong>連結有效期限：</strong>${expiryText}</div>
       `;
 
       const statusEl = document.getElementById('shortUrlStatus');
       const msgBox = document.getElementById('shareMessageText');
 
-      const buildMsg = (targetUrl) =>
-        `【勁順汽車 SUZUKI 購車契約確認】\n貴賓 您好，我是勁順汽車 (${currentBranch}) 業務代表 ${sales}。\n您訂購的「${model} (${color})」車價與配件明細已建立，請點擊以下專屬連結檢視訂單內容、填寫買受人基本資料並完成電子簽名：\n\n${targetUrl}`;
+      const buildMsg = (targetUrl) => {
+        const expNotice = expEpochSec > 0
+          ? `\n⏰ 本專屬連結有效期限至：${formatDateTimeFull(expEpochSec)}（${expiryHours}小時內有效，逾時自動失效）`
+          : '';
+        return `【勁順汽車 SUZUKI 購車契約確認】\n貴賓 您好，我是勁順汽車 (${currentBranch}) 業務代表 ${sales}。\n您訂購的「${model} (${color})」車價與配件明細已建立，請點擊以下專屬連結檢視訂單內容、填寫買受人基本資料並完成電子簽名：${expNotice}\n\n${targetUrl}`;
+      };
 
       msgBox.value = buildMsg(longUrl);
       statusEl.textContent = '⏳ 正在自動縮短網址...';
-
-      const modal = document.getElementById('shareModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
 
       try {
         const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
@@ -1897,13 +2157,13 @@
           const tinyUrl = (await res.text()).trim();
           if (tinyUrl.startsWith('http')) {
             msgBox.value = buildMsg(tinyUrl);
-            statusEl.textContent = '✅ 已轉換為超短網址 (100% 防截斷)';
+            statusEl.textContent = '✅ 已轉換為 24hr 限時超短網址 (100% 防截斷)';
             return;
           }
         }
       } catch (e) {}
 
-      statusEl.textContent = '⚡ 已啟用防截斷安全連結格式';
+      statusEl.textContent = '⚡ 已啟用 24hr 限時防截斷安全連結格式';
     };
 
     window.closeShareModal = function() {
@@ -1915,12 +2175,8 @@
     window.copyShareMessage = function() {
       const textEl = document.getElementById('shareMessageText');
       textEl.select();
-      try {
-        document.execCommand('copy');
-        window.showToast('✅ 已複製邀請訊息與短網址！請直接貼到客戶 LINE。', 'bg-emerald-600');
-      } catch (e) {
-        window.showToast('請長按文字框複製連結', 'bg-amber-600');
-      }
+      document.execCommand('copy');
+      window.showToast('✅ 已複製邀請訊息與 24hr 限時短網址！請直接貼到客戶 LINE。', 'bg-emerald-600');
     };
 
     window.nativeShareOrder = function() {
@@ -1933,6 +2189,10 @@
     };
 
     window.customerCompleteAndExport = function() {
+      if (isOrderExpiredLocked) {
+        window.showToast('⚠️ 此專屬連結已超過 24 小時有效期限。', 'bg-red-600');
+        return;
+      }
       if (!getElVal('buyerName').trim()) {
         window.showToast('⚠️ 請填寫「買受人姓名 / 公司名稱」', 'bg-amber-600');
         document.getElementById('buyerName').focus();
@@ -2034,15 +2294,19 @@
     };
 
     window.openResetModal = function() {
-      const modal = document.getElementById('resetModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      const m = document.getElementById('resetConfirmModal');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
     };
 
     window.closeResetModal = function() {
-      const modal = document.getElementById('resetModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      const m = document.getElementById('resetConfirmModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
     };
 
     window.confirmResetForm = function() {
