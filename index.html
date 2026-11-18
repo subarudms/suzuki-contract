@@ -20,7 +20,7 @@
     input[type="date"] {
       appearance: auto;
       -webkit-appearance: menulist-button;
-      min-height: 42px;
+      min-height: 40px;
       background-color: #ffffff;
       cursor: pointer;
     }
@@ -41,17 +41,19 @@
       padding: 8px 0 32px 0;
     }
 
-    /* 單張 A4 1:1 實體契約容器 (200mm x 286mm 滿版) */
+    /* =========================================================================
+       1:1 單張 A4 實體契約容器 (200mm x 284mm 精準高度配比，零裁切、零重疊)
+       ========================================================================= */
     #a4-contract-sheet {
       width: 200mm;
-      height: 286mm;
-      min-height: 286mm;
-      max-height: 286mm;
+      height: 284mm;
+      min-height: 284mm;
+      max-height: 284mm;
       background: #ffffff;
       color: #000000;
       font-family: "PMingLiU", "MingLiU", "BiauKai", "DFKai-SB", "Noto Serif TC", serif;
       box-sizing: border-box;
-      padding: 2mm 2.5mm;
+      padding: 1.5mm 2mm;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -62,52 +64,73 @@
       transform-origin: top left;
     }
 
+    /* 主體外框與右側獨立直書欄：徹底隔離不重疊 (修復紅框 3) */
     .a4-main-wrapper {
       display: flex;
       flex-direction: row;
+      align-items: stretch;
+      justify-content: space-between;
       width: 100%;
       flex: 1;
       min-height: 0;
     }
 
     .a4-left-body {
-      flex: 1;
+      width: calc(100% - 6.2mm);
+      max-width: calc(100% - 6.2mm);
       display: flex;
       flex-direction: column;
-      border: 1.5px solid #000;
+      border: 1.4px solid #000;
       min-height: 0;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
+    /* 右側直書注意事項：不使用 writing-mode，改用單字垂直置中堆疊，100% 不會向左偏移重疊表格 */
     .a4-right-sidebar {
-      width: 5.5mm;
-      padding-left: 1mm;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      font-size: 6.2pt;
-      line-height: 1.12;
-      letter-spacing: 0.2px;
+      width: 5.2mm;
+      min-width: 5.2mm;
+      max-width: 5.2mm;
+      margin-left: 1mm;
+      font-size: 5.7pt;
+      line-height: 1.04;
       color: #000;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      align-items: center;
+      text-align: center;
       user-select: none;
+      overflow: hidden;
+      box-sizing: border-box;
+      padding: 0.5mm 0;
     }
 
+    .a4-right-sidebar .v-char-col {
+      width: 4.4mm;
+      word-break: break-all;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    /* 表格高度精準控制：22 列總計約 96mm，釋放 140mm 給契約條款 (修復條款裁切) */
     .a4-table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+      flex-shrink: 0;
     }
 
     .a4-table td, .a4-table th {
       border: 1px solid #000;
-      padding: 0.4mm 1.2mm;
-      font-size: 8.2pt;
-      line-height: 1.15;
+      padding: 0.22mm 1mm;
+      font-size: 7.75pt;
+      line-height: 1.08;
       vertical-align: middle;
       word-break: break-all;
       overflow: hidden;
-      height: 4.85mm;
+      height: 4.32mm;
     }
 
     .a4-label {
@@ -117,38 +140,58 @@
       white-space: nowrap;
     }
 
+    /* 修復紅框 1 與紅框 2：直排標題改用標準水平置中 + <br> 換行，絕不偏右壓字 */
+    .a4-v-cell {
+      text-align: center !important;
+      vertical-align: middle !important;
+      font-weight: bold;
+      background-color: #fafafa;
+      font-size: 7.2pt !important;
+      line-height: 1.12 !important;
+      padding: 0.5mm 0.2mm !important;
+      white-space: nowrap;
+    }
+
     .a4-chk {
       display: inline-block;
-      width: 2.8mm;
-      height: 2.8mm;
+      width: 2.7mm;
+      height: 2.7mm;
       border: 1px solid #000;
       text-align: center;
-      line-height: 2.6mm;
-      font-size: 7pt;
+      line-height: 2.5mm;
+      font-size: 6.8pt;
       font-family: sans-serif;
-      margin-right: 0.5mm;
+      margin-right: 0.4mm;
       vertical-align: middle;
     }
 
-    /* 契約條款雙欄設定 */
+    /* 契約條款雙欄設定：6.4pt / 行高 1.16，充裕容納第一至第十五條與第十四條個資簽名 */
     .a4-terms-container {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2.2mm;
-      padding: 1.2mm 1.6mm;
+      column-gap: 2mm;
+      padding: 0.9mm 1.4mm;
       border-top: 1px solid #000;
-      font-size: 6.75pt;
-      line-height: 1.21;
+      font-size: 6.4pt;
+      line-height: 1.165;
       text-align: justify;
       overflow: hidden;
       min-height: 0;
     }
 
+    .a4-term-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 0;
+    }
+
     .a4-term-item {
-      padding-left: 1.9em;
-      text-indent: -1.9em;
-      margin-bottom: 1.2px;
+      padding-left: 1.85em;
+      text-indent: -1.85em;
+      margin-bottom: 0.5px;
     }
 
     @media print {
@@ -161,8 +204,10 @@
         margin: 0 !important;
         padding: 0 !important;
         width: 200mm !important;
-        height: 286mm !important;
+        height: 284mm !important;
         overflow: hidden !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       .no-print {
         display: none !important;
@@ -184,10 +229,10 @@
       #a4-contract-sheet {
         border: none !important;
         box-shadow: none !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
         width: 200mm !important;
-        height: 286mm !important;
-        max-height: 286mm !important;
+        height: 284mm !important;
+        max-height: 284mm !important;
         transform: none !important;
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
@@ -210,7 +255,7 @@
                 💼 業務填單模式
               </span>
             </div>
-            <p class="text-[11px] text-slate-400">支援極簡短網址傳送 LINE ➔ 客戶確認填寫個資與簽名</p>
+            <p class="text-[11px] text-slate-400">支援極簡短網址傳送 LINE ➔ 客戶確認填寫個資與簽名 ➔ 單張 A4 完美對齊</p>
           </div>
         </div>
       </div>
@@ -241,7 +286,7 @@
           <button type="button" id="topBtnShareLink" onclick="window.openShareModal()" class="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 font-bold rounded-lg text-white shadow transition flex items-center gap-1">
             🔗 產生客戶簽署連結
           </button>
-          <button type="button" onclick="window.resetForm()" title="清空重填" class="px-2.5 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition">
+          <button type="button" onclick="window.openResetModal()" title="清空重填" class="px-2.5 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition">
             ↻
           </button>
           <button type="button" onclick="window.triggerPrintA4()" class="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 font-bold rounded-lg text-white shadow transition flex items-center gap-1">
@@ -257,6 +302,18 @@
     <div id="statusToastInner" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow flex items-center justify-between">
       <span id="statusToastText">已切換模式</span>
       <button type="button" onclick="document.getElementById('statusToast').classList.add('hidden')" class="text-white/80 hover:text-white">✕</button>
+    </div>
+  </div>
+
+  <!-- 自訂清空確認視窗 -->
+  <div id="resetModal" class="fixed inset-0 bg-slate-900/70 z-50 hidden items-center justify-center p-4 no-print">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-4">
+      <h3 class="text-base font-black text-slate-900">確認清空重填？</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">這將會清除目前已填寫的買受人資料、配件與手寫簽名並重新產生單號。</p>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="window.closeResetModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">取消</button>
+        <button type="button" onclick="window.confirmResetForm()" class="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 text-white hover:bg-red-500">確定清空</button>
+      </div>
     </div>
   </div>
 
@@ -843,7 +900,7 @@
   <div id="a4-preview-wrapper" class="hidden">
     <div class="max-w-4xl mx-auto px-3 pt-2 no-print">
       <div class="bg-slate-800 text-white text-xs rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow">
-        <span class="bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded">1:1 單張 A4 滿版預覽</span>
+        <span class="bg-emerald-500 text-slate-950 font-black px-2 py-0.5 rounded">1:1 單張 A4 滿版預覽（已修復 3 處紅框對齊與條款簽名完整呈現）</span>
         <div class="flex items-center gap-2">
           <button type="button" onclick="window.switchViewMode('form')" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-lg font-bold">← 返回修改表單</button>
           <button type="button" onclick="window.triggerPrintA4()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-bold">🖨️ 立即列印 / 存為 PDF</button>
@@ -855,22 +912,22 @@
       <div id="a4-contract-sheet">
 
         <!-- 1. 契約書頂部大標題與資料編號框 -->
-        <div class="flex items-end justify-between mb-1" style="padding-right: 5.5mm;">
+        <div class="flex items-end justify-between mb-0.5 shrink-0" style="padding-right: 6.2mm;">
           <div class="w-28"></div>
-          <div class="text-center tracking-[0.28em] font-black" style="font-size: 19pt; line-height: 1.05;">
+          <div class="text-center tracking-[0.28em] font-black" style="font-size: 18pt; line-height: 1.05;">
             勁順汽車　汽車買賣契約書
           </div>
-          <table class="border-collapse border border-black" style="width: 48mm;">
+          <table class="border-collapse border border-black" style="width: 47mm;">
             <tr>
-              <td class="border border-black text-center font-bold py-0.5" style="font-size: 8pt; letter-spacing: 2px;">資 料 編 號</td>
+              <td class="border border-black text-center font-bold py-0.5" style="font-size: 7.5pt; letter-spacing: 2px; height: 3.8mm;">資 料 編 號</td>
             </tr>
             <tr>
-              <td id="a4-docNo" class="border border-black text-center font-mono font-bold py-0.5" style="font-size: 8.5pt; height: 5mm;"></td>
+              <td id="a4-docNo" class="border border-black text-center font-mono font-bold py-0.5" style="font-size: 8.2pt; height: 4.5mm;"></td>
             </tr>
           </table>
         </div>
 
-        <!-- 2. 契約主體外框 + 右側直書注意事項 -->
+        <!-- 2. 契約主體外框 + 右側直書注意事項 (完全隔離不重疊) -->
         <div class="a4-main-wrapper">
           <div class="a4-left-body">
 
@@ -899,12 +956,12 @@
                   <td class="a4-label">公</td>
                   <td id="a4-buyerTelWork"></td>
                   <td class="a4-label">交車地點</td>
-                  <td id="a4-deliveryLocation" style="font-size: 7pt; line-height: 1.05;"></td>
+                  <td id="a4-deliveryLocation" style="font-size: 6.8pt; line-height: 1.05;"></td>
                 </tr>
                 <tr>
                   <td class="a4-label">領照名稱</td>
                   <td id="a4-licenseName"></td>
-                  <td colspan="2" class="a4-label" style="font-size: 7pt;">營利事業或身分證號碼</td>
+                  <td colspan="2" class="a4-label" style="font-size: 6.8pt;">營利事業或身分證號碼</td>
                   <td id="a4-buyerId" class="font-mono font-bold"></td>
                   <td class="a4-label">出生年月日</td>
                   <td id="a4-buyerDob" class="text-center"></td>
@@ -916,7 +973,7 @@
                   <td id="a4-carModel" class="font-bold"></td>
                 </tr>
                 <tr>
-                  <td rowspan="3" class="a4-label" style="line-height: 1.1;">使 用 人<br><span style="font-size: 7pt;">(連絡人)</span></td>
+                  <td rowspan="3" class="a4-label" style="line-height: 1.08;">使 用 人<br><span style="font-size: 6.8pt;">(連絡人)</span></td>
                   <td rowspan="3" id="a4-userName"></td>
                   <td rowspan="3" class="a4-label">電 話</td>
                   <td class="a4-label">宅</td>
@@ -944,12 +1001,12 @@
                 <tr>
                   <td class="a4-label">戶籍地址</td>
                   <td colspan="4" id="a4-userAddress"></td>
-                  <td class="a4-label" style="font-size: 7pt;">車型年份/出廠年份</td>
+                  <td class="a4-label" style="font-size: 6.8pt;">車型年份/出廠年份</td>
                   <td id="a4-carYear" class="text-center font-mono"></td>
                 </tr>
                 <tr>
                   <td class="a4-label">E-mail</td>
-                  <td colspan="2" id="a4-buyerEmail" style="font-size: 7.5pt;"></td>
+                  <td colspan="2" id="a4-buyerEmail" style="font-size: 7.2pt;"></td>
                   <td class="a4-label">產 地</td>
                   <td id="a4-carOrigin" class="text-center"></td>
                   <td class="a4-label">能源種類</td>
@@ -958,9 +1015,9 @@
                 <tr>
                   <td class="a4-label">車輛價格</td>
                   <td colspan="2" class="text-right font-bold">
-                    <span id="a4-vehiclePriceNum" class="font-mono text-sm"></span> 元整(含營業稅)
+                    <span id="a4-vehiclePriceNum" class="font-mono"></span> 元整(含營業稅)
                   </td>
-                  <td colspan="4" id="a4-chinesePrice" class="font-bold tracking-wider" style="font-size: 8.2pt;">
+                  <td colspan="4" id="a4-chinesePrice" class="font-bold tracking-wider" style="font-size: 7.9pt;">
                     新台幣 $ 零佰 零拾 零萬 零仟 零佰 零拾 零元整
                   </td>
                 </tr>
@@ -1016,7 +1073,7 @@
                   <td style="border-top: none;">付款行庫</td>
                   <td style="border-top: none;">分行</td>
                   <td style="border-top: none;">帳 號</td>
-                  <td style="border-top: none; font-size: 7pt;">業代確認</td>
+                  <td style="border-top: none; font-size: 6.8pt;">業代確認</td>
                 </tr>
               </thead>
               <tbody>
@@ -1047,24 +1104,24 @@
               </tbody>
             </table>
 
-            <!-- 中段三欄：委辦保險 / 配件加裝 / 其他約定事項 -->
+            <!-- 中段三欄：委辦保險 / 配件加裝 / 其他約定事項 (修復紅框 1 與紅框 2，改用 <br> 垂直堆疊，100% 置中不壓線) -->
             <table class="a4-table" style="border-top: none;">
               <colgroup>
-                <col style="width: 4%;">
-                <col style="width: 34%;">
-                <col style="width: 4%;">
-                <col style="width: 24%;">
+                <col style="width: 5.2%;">
+                <col style="width: 33.8%;">
+                <col style="width: 4.8%;">
+                <col style="width: 23.2%;">
                 <col style="width: 10%;">
-                <col style="width: 24%;">
+                <col style="width: 23%;">
               </colgroup>
               <tbody>
                 <tr>
-                  <td rowspan="7" class="a4-label" style="writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 1px; border-top: none;">
-                    買受人委辦車輛保險事項
+                  <td rowspan="7" class="a4-v-cell" style="border-top: none;">
+                    買<br>受<br>人<br>委<br>辦<br>車<br>輛<br>保<br>險<br>事<br>項
                   </td>
                   <td class="a4-label" style="border-top: none;">投 保 種 類</td>
-                  <td rowspan="6" class="a4-label" style="writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 2px; border-top: none;">
-                    配 件 加 裝
+                  <td rowspan="6" class="a4-v-cell" style="border-top: none; line-height: 1.45 !important;">
+                    配<br>件<br>加<br>裝
                   </td>
                   <td class="a4-label" style="border-top: none;">品 名 ／ 規 格</td>
                   <td class="a4-label" style="border-top: none;">金 額</td>
@@ -1076,7 +1133,7 @@
                   </td>
                   <td>1. <span id="a4-accName1"></span></td>
                   <td id="a4-accPrice1" class="text-right font-mono"></td>
-                  <td rowspan="6" id="a4-otherAgreements" style="vertical-align: top; white-space: pre-wrap; padding: 1mm; font-size: 7.8pt; line-height: 1.2;"></td>
+                  <td rowspan="6" id="a4-otherAgreements" style="vertical-align: top; white-space: pre-wrap; padding: 1mm; font-size: 7.6pt; line-height: 1.18;"></td>
                 </tr>
                 <tr>
                   <td>
@@ -1115,7 +1172,7 @@
                   <td>
                     <div class="flex items-center justify-between">
                       <span>入款型態：<span id="a4-insPayCash" class="a4-chk"></span>現金 <span id="a4-insPayCheck" class="a4-chk"></span>支票</span>
-                      <span id="a4-insPayDate" style="font-size: 7.2pt;">入款日期： 年 月 日</span>
+                      <span id="a4-insPayDate" style="font-size: 7pt;">入款日期： 年 月 日</span>
                     </div>
                   </td>
                   <td colspan="2" class="text-center font-bold">配件加裝費用合計</td>
@@ -1124,11 +1181,11 @@
               </tbody>
             </table>
 
-            <!-- 下半部：第一至第十五條完整契約條款（雙欄對齊） -->
+            <!-- 下半部：第一至第十五條完整契約條款（雙欄對齊，完全不裁切第七、八、十四、十五條） -->
             <div class="a4-terms-container">
-              <div>
+              <div class="a4-term-col">
                 <div class="a4-term-item"><strong>一、契約之生效：</strong>本契約書經買受人與出賣人及經手人簽章，並經買受人交付訂金由出賣人收訖現金或票據兌現後始生效力。本契約書生效後，非經雙方另以書面簽章外，任何一方不得轉讓及(或)典當本契約之一切權利義務。另有關本契約書增刪修改，應由雙方以書面為之。</div>
-                <div class="a4-term-item"><strong>二、標的物規格、顏色之變更或停止供應：</strong>本契約標的物之車色，非經地方同意，契約當事人任何一方不得要求變更規格、顏色或配件。本契約標的物之車輛因供應廠商改款、變更或停止供應，致出賣人不能依原約定車型交車，出賣人應即通知買受人，買受人得解除契約，請求返還已付價金，及自受領日起至返還日止依法定利率計算之利息。但買受人亦得不解除契約而依出賣人所定價格標準核算買賣價金，並受領改款或變更後之標的物者，出賣人不得拒絕。</div>
+                <div class="a4-term-item"><strong>二、標的物規格、顏色之變更或停止供應：</strong>本契約標的物之車色，非經他方同意，契約當事人任何一方不得要求變更規格、顏色或配件。本契約標的物之車輛因供應廠商改款、變更或停止供應，致出賣人不能依原約定車型交車，出賣人應即通知買受人，買受人得解除契約，請求返還已付價金，及自受領日起至返還日止依法定利率計算之利息。但買受人亦得不解除契約而依出賣人所定價格標準核算買賣價金，並受領改款或變更後之標的物者，出賣人不得拒絕。</div>
                 <div class="a4-term-item"><strong>三、匯率與關稅等之變動：</strong>訂購已進口之汽車或國產汽車時，本契約書所載之價金，除另有約定外，已包括進口關稅、商港建設費、貨物稅、營業稅、交車前之運費、運送保險費及其他應由出賣人負擔之稅費；但不包括申請牌照手續費、車輛保險費、監理規費、使用牌照稅及燃料費等應由買受人負擔之各項稅費及費用。本契約簽訂後，上述稅費如有調整，其利益或不利益均歸買受人承受及負擔，但可歸責於出賣人之事由致增加負擔者，其增加部份由出賣人負擔。如訂購尚未進口之汽車時，出賣人之進口成本確有調高或調低，概依本契約書所訂之價格為準，但匯率、關稅、商港建設費等稅費於結匯完納之日有調高或調低者，一律以實際結匯之匯率、稅率為準計算價金，其因可歸責於出賣人之事由延宕而未辦理結匯手續，致蒙受較高稅率或較高匯率之不利益者，其提高部份由出賣人負擔。</div>
                 <div class="a4-term-item"><strong>四、契約履行：</strong>1.出賣人逾本契約書約定交車日期未交付車輛，經買受人以書面催告後30日內仍未履行者，買受人得解除本訂購合約，並請求出賣人返還已付訂金及出賣人受領訂金之日起至返還日止法定利率計算之利息。2.買受人經出賣人通知交車日後15日內仍未備齊尾款及各項費用辦理交車手續者，出賣人得解除本訂購合約，並沒收買受人已給付之訂金及價金，但出賣人沒收之價金，不得逾本契約買賣總價金之百分之十，逾百分之十者應縮減為百分之十，但出賣人能證明其所受損害超過買賣總價金之百分之十者，不在此限。</div>
                 <div class="a4-term-item"><strong>五、瑕疵擔保責任或保固責任：</strong>出賣人應依民法及其他法令規定對買受人負瑕疵擔保責任。出賣人自交車之日起三年或行駛十萬公里(以先到者為準)，對車輛本身之瑕疵零件負更新或修復之責任，但因買受人未依車主手冊使用車輛，或未依保養手冊所定時間、里程、場所保養或維修所致者，出賣人不負保固責任。車輛因天然災害、自然耗損或因可歸責於買受人之事由致生損壞者，亦同。所有出賣人應提供保固責任之內容項目，悉依「使用手冊」(或「使用保養手冊」)所記載之"新車保固說明"內容實施。出賣人應於交車時交付使用手冊，使用手冊之記載亦為本契約之一部份。</div>
@@ -1137,59 +1194,58 @@
                 <div class="a4-term-item"><strong>八、因標的物重大瑕疵之解約或更換新車：</strong>交車後一百八十天內或行駛一萬二千公里之內(以先到者為準)，若發生下列重大瑕疵情事之一，經雙方同意之專業機構鑑定或由買受人逕行委託經中央主管機關公告之專業機構鑑定，鑑定結果證實係因標的物瑕疵所致，而非買受人及(或)車輛使用者之故意或過失所致者，出賣人除應負擔鑑定費用外，並應依買受人之請求更換同型新車(或等值新車)予買受人；或依買受人之請求而解除本契約並返</div>
               </div>
 
-              <div class="flex flex-col justify-between">
-                <div>
-                  <div style="margin-bottom: 1.2px;">還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)於行駛時突然起火燃燒者 (二)於行駛時煞車失靈，經送出賣人或原廠維修二次而未修復者 (三)於行駛時突然熄火故障，經送出賣人或原廠維修二次而未修復者 (四)於排檔或行駛時發生暴衝，經送出賣人或原廠維修二次而未修復者 (五)於行駛時引擎溫度升高至極限，經送出賣人或原廠維修二次而未修復者 (六)其他重大瑕疵，有危害生命安全或身體健康之虞，經送出賣人或原廠維修二次而未修復者。</div>
-                  <div class="a4-term-item"><strong>九、標的物屢修不復之效果：</strong>若發生下列情事之一，出賣人應依買受人之請求更換同型(或等值)新車予買受人，或依買受人之請求而解除本契約書並退還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)交車後一百八十天內或行駛一萬二千公里之內(以先到者為準)，因相同瑕疵經送修出賣人或原廠檢修四次而無法回復正常機能者。(二)交車後一百八十天之內，因機能瑕疵所致無法正常使用車輛，經出賣人檢修，其累積無法使用日數達三十日以上。但有下列情形之一者，期間不予累計：1.買受人未依通知取車之期間。2.回廠維修已提供買受人代步車或補償相當代步費用之合理期間。前項規定並不妨害消費者依法律或業者之保固所得主張之權利。</div>
-                  <div class="a4-term-item"><strong>十、保證書及使用說明書：</strong>出售產品者應訂約後，至遲於交車時，交付標的物之中文保證書及中文使用說明書，但中文使用說明書得以買受人同意之方式提供。前項使用說明書應包含下列事項：(一)標的物組件、功能說明 (二)正確使用方法 (三)操作程序 (四)危險警語與避免方式(例如：禁止改裝、加裝) (五)簡易故障處理 (六)維修服務處所及其他相關資訊。本買賣標的物性質上或使用上有危害人體健康、生命安全之虞者，應於保證書或使用說明書以醒目之字體或圖樣標明。</div>
-                  <div class="a4-term-item"><strong>十一、</strong>除本契約另有約定外，買受人得以書面通知出賣人將由本契約所生之債權讓與第三人，並由第三人負擔其債務，但買受人仍應負連帶給付之責，但如因第三人資力明顯不足或其他非可歸責於出賣人之事由者致無法轉讓者，不在此限。</div>
-                  <div class="a4-term-item"><strong>十二、</strong>因不可歸責於雙方當事人之事由，致給付不能者，出賣人應返還買受人已付之價金，及自受領日起至返還日止依法定利率計算之利息。</div>
-                  <div class="a4-term-item"><strong>十三、代辦義務及手續費用：</strong>買受人得委任出賣人代辦申請牌照及動產擔保交易登記等手續，出賣人不得拒絕，但出賣人得複委任他人辦理，除有特別約定者外，政府規費及代辦費用由買受人負擔。</div>
-                  <div class="a4-term-item"><strong>十四、對於買受人為購買本契約標的物之車輛所提供之個人資料，買受人瞭解且同意如下：</strong>(一)買受人之個人資料係由出賣人及SUZUKI台灣總代理金鈴汽車股份有限公司(下稱「金鈴汽車」)所分別蒐集，基於履行本契約、維修保養服務、辦理購車貸款與保險、保險理賠、事故處理、拖吊服務、客戶關懷服務及行銷等目的，出賣人與金鈴汽車得於中華民國境內，分別蒐集、處理及利用買受人於買賣契約中所提供之個人資料，於上述目的之必要期間內，出賣人及金鈴汽車將保有及利用買受人之相關個人資料。(二)買受人同意基於上述目的之必要，出賣人及金鈴汽車得分別委託其關係企業、金鈴汽車授權之總經銷商及經銷商、或其他與出賣人及金鈴汽車簽約之合作廠商，就上開個人資料予以處理、利用或再為蒐集。(三)買受人瞭解在符合個人資料保護相關法令規定下，其得向出賣人或金鈴汽車請求閱覽、補充、更正、停止蒐集、處理或利用，或刪除其個人資料，或請求提供該等資料之複製本。(四)買受人瞭解如其不願提供上開個人資料，或要求出賣人或金鈴汽車停止處理、利用或刪除其個人資料，可能導致上述部分或全部之目的無法完成，而對買受人之權益有所影響。</div>
+              <div class="a4-term-col">
+                <div>還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)於行駛時突然起火燃燒者 (二)於行駛時煞車失靈，經送出賣人或原廠維修二次而未修復者 (三)於行駛時突然熄火故障，經送出賣人或原廠維修二次而未修復者 (四)於排檔或行駛時發生暴衝，經送出賣人或原廠維修二次而未修復者 (五)於行駛時引擎溫度升高至極限，經送出賣人或原廠維修二次而未修復者 (六)其他重大瑕疵，有危害生命安全或身體健康之虞，經送出賣人或原廠維修二次而未修復者。</div>
+                <div class="a4-term-item"><strong>九、標的物屢修不復之效果：</strong>若發生下列情事之一，出賣人應依買受人之請求更換同型(或等值)新車予買受人，或依買受人之請求而解除本契約書並退還已付之價金，及自受領日起至返還日止依法定利率計算之利息。(一)交車後一百八十天內或行駛一萬二千公里之內(以先到者為準)，因相同瑕疵經送修出賣人或原廠檢修四次而無法回復正常機能者。(二)交車後一百八十天之內，因機能瑕疵所致無法正常使用車輛，經出賣人檢修，其累積無法使用日數達三十日以上。但有下列情形之一者，期間不予累計：1.買受人未依通知取車之期間。2.回廠維修已提供買受人代步車或補償相當代步費用之合理期間。前項規定並不妨害消費者依法律或業者之保固所得主張之權利。</div>
+                <div class="a4-term-item"><strong>十、保證書及使用說明書：</strong>出售產品者應訂約後，至遲於交車時，交付標的物之中文保證書及中文使用說明書，但中文使用說明書得以買受人同意之方式提供。前項使用說明書應包含下列事項：(一)標的物組件、功能說明 (二)正確使用方法 (三)操作程序 (四)危險警語與避免方式(例如：禁止改裝、加裝) (五)簡易故障處理 (六)維修服務處所及其他相關資訊。本買賣標的物性質上或使用上有危害人體健康、生命安全之虞者，應於保證書或使用說明書以醒目之字體或圖樣標明。</div>
+                <div class="a4-term-item"><strong>十一、</strong>除本契約另有約定外，買受人得以書面通知出賣人將由本契約所生之債權讓與第三人，並由第三人負擔其債務，但買受人仍應負連帶給付之責，但如因第三人資力明顯不足或其他非可歸責於出賣人之事由者致無法轉讓者，不在此限。</div>
+                <div class="a4-term-item"><strong>十二、</strong>因不可歸責於雙方當事人之事由，致給付不能者，出賣人應返還買受人已付之價金，及自受領日起至返還日止依法定利率計算之利息。</div>
+                <div class="a4-term-item"><strong>十三、代辦義務及手續費用：</strong>買受人得委任出賣人代辦申請牌照及動產擔保交易登記等手續，出賣人不得拒絕，但出賣人得複委任他人辦理，除有特別約定者外，政府規費及代辦費用由買受人負擔。</div>
+                <div class="a4-term-item"><strong>十四、對於買受人為購買本契約標的物之車輛所提供之個人資料，買受人瞭解且同意如下：</strong>(一)買受人之個人資料係由出賣人及SUZUKI台灣總代理金鈴汽車股份有限公司(下稱「金鈴汽車」)所分別蒐集，基於履行本契約、維修保養服務、辦理購車貸款與保險、保險理賠、事故處理、拖吊服務、客戶關懷服務及行銷等目的，出賣人與金鈴汽車得於中華民國境內，分別蒐集、處理及利用買受人於買賣契約中所提供之個人資料，於上述目的之必要期間內，出賣人及金鈴汽車將保有及利用買受人之相關個人資料。(二)買受人同意基於上述目的之必要，出賣人及金鈴汽車得分別委託其關係企業、金鈴汽車授權之總經銷商及經銷商、或其他與出賣人及金鈴汽車簽約之合作廠商，就上開個人資料予以處理、利用或再為蒐集。(三)買受人瞭解在符合個人資料保護相關法令規定下，其得向出賣人或金鈴汽車請求閱覽、補充、更正、停止蒐集、處理或利用，或刪除其個人資料，或請求提供該等資料之複製本。(四)買受人瞭解如其不願提供上開個人資料，或要求出賣人或金鈴汽車停止處理、利用或刪除其個人資料，可能導致上述部分或全部之目的無法完成，而對買受人之權益有所影響。</div>
+
+                <!-- 第十四條個資同意簽名欄 (高度固定、絕不裁切) -->
+                <div class="relative py-0.5 flex items-end justify-between border-b border-dotted border-black shrink-0" style="min-height: 7.8mm;">
+                  <div class="font-bold" style="font-size: 6.35pt; line-height: 1.12; width: 64%;">
+                    買受人已充份了解出賣人及金鈴汽車將如何使用個人資料及買受人就其提供個人資料之相關權益，基此，同意本條約定並提供個人資料。　<strong>(簽名蓋章)</strong>
+                  </div>
+                  <div class="relative flex-1 h-7 flex items-center justify-center">
+                    <img id="a4SigPrivacyImg" alt="" class="max-h-7 max-w-full object-contain hidden">
+                  </div>
                 </div>
 
-                <div class="relative py-0.5 my-0.5 flex items-end justify-between border-b border-dotted border-black" style="min-height: 9.5mm;">
-                  <div class="font-bold" style="font-size: 6.7pt; line-height: 1.15; width: 62%;">
-                    買受人已充份了解出賣人及金鈴汽車將如何使用個人資料及買受人就其提供個人資料之相關權益，基此，同意本條約定並提供個人資料。　　　　　<strong>(簽名蓋章)</strong>
-                  </div>
-                  <div class="relative flex-1 h-9 flex items-center justify-center">
-                    <img id="a4SigPrivacyImg" alt="" class="max-h-9 max-w-full object-contain hidden">
-                  </div>
-                </div>
-
-                <div class="a4-term-item"><strong>十五、</strong>本訂購合約如有未盡事宜，雙方應本誠實原則協商處理，如有爭議而無法協商處理時，雙方同意以出賣人營業所所在地之地方法院為第一審管轄法院。</div>
+                <div class="a4-term-item shrink-0"><strong>十五、</strong>本訂購合約如有未盡事宜，雙方應本誠實原則協商處理，如有爭議而無法協商處理時，雙方同意以出賣人營業所所在地之地方法院為第一審管轄法院。</div>
               </div>
             </div>
 
           </div>
 
-          <!-- 右側垂直注意事項欄 -->
+          <!-- 右側獨立直書注意事項欄 (修復紅框 3：使用單字垂直堆疊，100% 獨立在表格右框線外，絕不重疊 c.c. 與業代確認) -->
           <div class="a4-right-sidebar">
-            <div class="font-bold tracking-widest">第一聯：客戶聯</div>
-            <div>1.本公司不承做舊車換新車業務，即買賣舊車之風險，若有任何糾紛及權益問題，恕無法協助處理。</div>
-            <div>2.車款敬請以電匯匯入本公司所指定之銀行帳戶。</div>
-            <div>3.開立即期支票者，敬請指名抬頭並禁止背書轉讓。</div>
+            <div class="v-char-col font-bold">第<br>一<br>聯<br>：<br>客<br>戶<br>聯</div>
+            <div class="v-char-col">1.<br>本<br>公<br>司<br>不<br>承<br>做<br>舊<br>車<br>換<br>新<br>車<br>業<br>務<br>，<br>即<br>買<br>賣<br>舊<br>車<br>之<br>風<br>險<br>，<br>若<br>有<br>任<br>何<br>糾<br>紛<br>及<br>權<br>益<br>問<br>題<br>，<br>恕<br>無<br>法<br>協<br>助<br>處<br>理<br>。</div>
+            <div class="v-char-col">2.<br>車<br>款<br>敬<br>請<br>以<br>電<br>匯<br>匯<br>入<br>本<br>公<br>司<br>所<br>指<br>定<br>之<br>銀<br>行<br>帳<br>戶<br>。</div>
+            <div class="v-char-col">3.<br>開<br>立<br>即<br>期<br>支<br>票<br>者<br>，<br>敬<br>請<br>指<br>名<br>抬<br>頭<br>並<br>禁<br>止<br>背<br>書<br>轉<br>讓<br>。</div>
           </div>
         </div>
 
         <!-- 3. 底部買賣雙方簽署區與中華民國日期 -->
-        <div class="pt-1" style="padding-right: 5.5mm; font-size: 8.4pt; line-height: 1.25;">
+        <div class="pt-0.5 shrink-0" style="padding-right: 6.2mm; font-size: 8pt; line-height: 1.2;">
           <div class="font-bold">
             買受人茲聲明，其已被給予三天以上之期間審閱本契約之內容，並同意以上所有之約款。<br>
             本契約書一式四份，由買受人執一份，出賣人執二份及出賣人之銷售業務代表執一份為憑。
           </div>
 
-          <div class="grid grid-cols-12 gap-2 pt-1 items-start">
+          <div class="grid grid-cols-12 gap-2 pt-0.5 items-start">
             <div class="col-span-6 relative space-y-0.5">
               <div class="flex items-center">
                 <span class="font-bold">買受人：</span>
                 <span id="a4-footerBuyerName" class="font-bold mr-2"></span>
-                <span class="text-xs text-neutral-600">(簽名蓋章)</span>
+                <span class="text-[7.5pt] text-neutral-600">(簽名蓋章)</span>
               </div>
               <div><span class="font-bold">地　址：</span><span id="a4-footerBuyerAddress"></span></div>
               <div><span class="font-bold">電　話：</span><span id="a4-footerBuyerTel"></span></div>
               <div><span class="font-bold">營利事業或身分證統一編號：</span><span id="a4-footerBuyerId" class="font-mono"></span></div>
-              <img id="a4SigBuyerImg" alt="" class="absolute left-28 -top-1 h-14 max-w-[55mm] object-contain pointer-events-none hidden">
+              <img id="a4SigBuyerImg" alt="" class="absolute left-28 -top-1 h-12 max-w-[52mm] object-contain pointer-events-none hidden">
             </div>
 
             <div class="col-span-6 space-y-0.5">
@@ -1204,7 +1260,7 @@
             </div>
           </div>
 
-          <div id="a4-rocDate" class="text-center font-bold tracking-[0.35em] pt-1" style="font-size: 9pt;">
+          <div id="a4-rocDate" class="text-center font-bold tracking-[0.35em] pt-0.5" style="font-size: 8.8pt;">
             中 華 民 國 115 年 11 月 18 日
           </div>
         </div>
@@ -1634,7 +1690,7 @@
       if (!sheet || !viewport) return;
       const vw = Math.min(window.innerWidth, document.documentElement.clientWidth || window.innerWidth);
       const sheetPxWidth = 756;
-      const sheetPxHeight = 1081;
+      const sheetPxHeight = 1074;
 
       if (vw < sheetPxWidth + 24) {
         const scale = (vw - 16) / sheetPxWidth;
@@ -1667,9 +1723,8 @@
 
     /* ==================== 極簡 URL 壓縮編碼與解碼（不會被 LINE 截斷） ==================== */
     function buildCompactShareUrl() {
-      // 只收集非預設或有填寫的精簡欄位，並使用 URLSearchParams (?m=c&...) 讓 LINE 100% 識別為完整超連結
       const params = new URLSearchParams();
-      params.set('m', 'c'); // customer mode
+      params.set('m', 'c');
 
       const bIdx = BRANCH_CODES.indexOf(currentBranch);
       if (bIdx >= 0) params.set('b', String(bIdx));
@@ -1698,7 +1753,6 @@
       if (getElVal('salesRepName')) params.set('sr', getElVal('salesRepName'));
       if (getElVal('sellerRep')) params.set('rp', getElVal('sellerRep'));
 
-      // 保險位元遮罩
       let insMask = 0;
       if (document.getElementById('insBodyChk')?.checked) insMask |= 1;
       if (document.getElementById('insAccident')?.checked) insMask |= 2;
@@ -1714,7 +1768,6 @@
       if (getElVal('insDeductible')) params.set('idd', getElVal('insDeductible'));
       if (getElVal('insTotal')) params.set('it', getElVal('insTotal'));
 
-      // 配件加裝
       const accArr = [];
       for (let i = 1; i <= 5; i++) {
         const n = getElVal(`accName${i}`).trim();
@@ -1724,7 +1777,6 @@
       if (accArr.length > 0) params.set('ac', accArr.join('|'));
       if (getElVal('otherAgreements').trim()) params.set('oa', getElVal('otherAgreements').trim());
 
-      // 若已預填買受人資料也一併帶入
       if (getElVal('buyerName')) params.set('bn', getElVal('buyerName'));
       if (getElVal('buyerTelHome')) params.set('bh', getElVal('buyerTelHome'));
       if (getElVal('buyerId')) params.set('bi', getElVal('buyerId'));
@@ -1736,7 +1788,6 @@
 
     function restoreFromUrlParams() {
       try {
-        // 同時支援新版 ?m=c&... 與舊版 #mode=customer
         const searchStr = window.location.search || (window.location.hash.includes('?') ? window.location.hash.split('?')[1] : window.location.hash.replace(/^#/, ''));
         if (!searchStr) return;
         const params = new URLSearchParams(searchStr);
@@ -1840,7 +1891,6 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
 
-      // 嘗試透過免費免金鑰 is.gd JSONP / CORS API 轉換為超短網址
       try {
         const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
         if (res.ok) {
@@ -1865,16 +1915,11 @@
     window.copyShareMessage = function() {
       const textEl = document.getElementById('shareMessageText');
       textEl.select();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(textEl.value).then(() => {
-          window.showToast('✅ 已複製邀請訊息與短網址！請直接貼到客戶 LINE。', 'bg-emerald-600');
-        }).catch(() => {
-          document.execCommand('copy');
-          window.showToast('✅ 已複製邀請訊息與短網址！', 'bg-emerald-600');
-        });
-      } else {
+      try {
         document.execCommand('copy');
-        window.showToast('✅ 已複製邀請訊息與短網址！', 'bg-emerald-600');
+        window.showToast('✅ 已複製邀請訊息與短網址！請直接貼到客戶 LINE。', 'bg-emerald-600');
+      } catch (e) {
+        window.showToast('請長按文字框複製連結', 'bg-amber-600');
       }
     };
 
@@ -1889,22 +1934,22 @@
 
     window.customerCompleteAndExport = function() {
       if (!getElVal('buyerName').trim()) {
-        alert('請填寫「買受人姓名 / 公司名稱」');
+        window.showToast('⚠️ 請填寫「買受人姓名 / 公司名稱」', 'bg-amber-600');
         document.getElementById('buyerName').focus();
         return;
       }
       if (!getElVal('buyerId').trim()) {
-        alert('請填寫「營利事業或身分證號碼」');
+        window.showToast('⚠️ 請填寫「營利事業或身分證號碼」', 'bg-amber-600');
         document.getElementById('buyerId').focus();
         return;
       }
       if (!getElVal('buyerTelHome').trim()) {
-        alert('請填寫「買受人電話」');
+        window.showToast('⚠️ 請填寫「買受人電話」', 'bg-amber-600');
         document.getElementById('buyerTelHome').focus();
         return;
       }
       if (!getElVal('buyerAddress').trim()) {
-        alert('請填寫「買受人戶籍地址」');
+        window.showToast('⚠️ 請填寫「買受人戶籍地址」', 'bg-amber-600');
         document.getElementById('buyerAddress').focus();
         return;
       }
@@ -1988,8 +2033,20 @@
       }
     };
 
-    window.resetForm = function() {
-      if (!confirm('確定要清空所有已填寫的資料與簽名嗎？')) return;
+    window.openResetModal = function() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    window.closeResetModal = function() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    window.confirmResetForm = function() {
+      window.closeResetModal();
       window.location.href = window.location.href.split('?')[0].split('#')[0];
     };
 
