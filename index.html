@@ -71,9 +71,9 @@
       min-height: 0;
     }
 
-    /* 左側主表格區：預留右側 6mm 給直書欄，避免紅框3重疊 */
+    /* 左側主表格區：預留右側 6.2mm 給直書欄，避免紅框3重疊 */
     .a4-left-body {
-      width: calc(100% - 6mm);
+      width: calc(100% - 6.2mm);
       display: flex;
       flex-direction: column;
       border: 1.5px solid #000;
@@ -81,11 +81,11 @@
       box-sizing: border-box;
     }
 
-    /* 右側直書注意事項欄：不使用 writing-mode 避免 Safari/iOS 列印偏移壓線 */
+    /* 右側直書注意事項欄：不使用 writing-mode，避免 iOS Safari 列印偏移壓線 */
     .a4-right-sidebar {
       width: 5.2mm;
-      margin-left: 0.8mm;
-      font-size: 5.6pt;
+      margin-left: 1mm;
+      font-size: 5.5pt;
       line-height: 1.03;
       color: #000;
       display: flex;
@@ -114,13 +114,13 @@
 
     .a4-table td, .a4-table th {
       border: 1px solid #000;
-      padding: 0.25mm 1mm;
-      font-size: 7.9pt;
+      padding: 0.22mm 1mm;
+      font-size: 7.85pt;
       line-height: 1.1;
       vertical-align: middle;
       word-break: break-all;
       overflow: hidden;
-      height: 4.35mm;
+      height: 4.32mm;
       box-sizing: border-box;
     }
 
@@ -131,15 +131,15 @@
       white-space: nowrap;
     }
 
-    /* 直排表格欄位（修正紅框1、紅框2：不使用 writing-mode，改用單字換行置中，100%不偏移） */
+    /* 直排表格欄位（修正紅框1、紅框2：改用 <br> 單字換行置中，絕不偏移壓字） */
     .a4-v-cell {
       text-align: center;
       vertical-align: middle;
       font-weight: bold;
       background-color: #fafafa;
-      font-size: 7.2pt;
-      line-height: 1.08;
-      padding: 0.5mm 0 !important;
+      font-size: 7.1pt;
+      line-height: 1.06;
+      padding: 0.4mm 0 !important;
     }
 
     .a4-chk {
@@ -238,7 +238,7 @@
                 ⏳ 24hr 效期倒數中
               </span>
             </div>
-            <p class="text-[11px] text-slate-400">支援 24 小時限時短網址傳送 LINE ➔ 客戶確認填寫個資與簽名 ➔ 單張 A4 滿版匯出</p>
+            <p class="text-[11px] text-slate-400">支援真正短網址 (is.gd / v.gd) 與 24 小時效期保護 ➔ 客戶確認簽名 ➔ 單張 A4 滿版匯出</p>
           </div>
         </div>
       </div>
@@ -267,7 +267,7 @@
 
         <div class="flex items-center gap-1.5">
           <button type="button" id="topBtnShareLink" onclick="window.openShareModal()" class="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 font-bold rounded-lg text-white shadow transition flex items-center gap-1">
-            🔗 產生客戶簽署連結
+            🔗 產生客戶短連結
           </button>
           <button type="button" onclick="window.openResetModal()" title="清空重填" class="px-2.5 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition">
             ↻
@@ -310,7 +310,7 @@
         <span id="expiredLockTag" class="inline-block bg-red-100 text-red-700 text-xs font-black px-3 py-1 rounded-full border border-red-200">
           連結已逾 24 小時有效期限
         </span>
-        <h2 id="expiredLockTitle" class="text-xl font-black text-slate-900">此專屬購車契約連結已失效</h2>
+        <h2 id="expiredLockTitle" class="text-xl font-black text-slate-900">此專屬購車契約連結已逾時失效</h2>
         <p id="expiredLockDesc" class="text-xs text-slate-600 leading-relaxed">
           為保障買賣雙方權益與車輛配額、優惠車價時效，本專屬訂單連結有效期限為 24 小時，目前已超過有效期限，無法檢視或簽署。
         </p>
@@ -348,7 +348,7 @@
           🔐 業務人員重新產生連結 / 測試解鎖
         </button>
         <div id="salesUnlockBox" class="hidden mt-3 bg-slate-100 p-3 rounded-xl space-y-2 text-left">
-          <label class="block text-[11px] font-bold text-slate-600">請輸入業務解鎖通行碼（預設 8888）或直接點選解鎖：</label>
+          <label class="block text-[11px] font-bold text-slate-600">請輸入業務解鎖通行碼（預設 8888）：</label>
           <div class="flex gap-2">
             <input type="password" id="salesUnlockPin" value="8888" placeholder="8888" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-mono bg-white">
             <button type="button" onclick="window.unlockExpiredOrderForSales()" class="shrink-0 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg">
@@ -421,7 +421,7 @@
     <section id="secHeaderBranch" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-100 pb-3">
         <div>
-          <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">電子訂單</span>
+          <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">第一聯：客戶聯</span>
           <h2 class="text-lg font-black text-slate-900 mt-1">勁順汽車　汽車買賣契約書</h2>
         </div>
         <div class="w-full md:w-60">
@@ -873,7 +873,7 @@
           </div>
           <div class="pt-2 border-t border-slate-200 flex items-center justify-between font-bold text-slate-900">
             <span>契約簽訂日期：</span>
-            <span id="formRocDateDisplay">中華民國 115 年 11 月 18 日</span>
+            <span id="formRocDateDisplay">中華民國 115 年 11 月 21 日</span>
           </div>
         </div>
       </div>
@@ -883,12 +883,12 @@
     <section class="pt-2">
       <div id="salesBottomBar" class="bg-indigo-950 text-white rounded-2xl p-4 shadow-xl border border-indigo-800 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="text-xs space-y-0.5 text-center sm:text-left">
-          <div class="font-extrabold text-sm text-indigo-200">💼 業務端流程：填妥車型、車價與配件後，即可產生 24hr 限時短網址傳給客戶簽名！</div>
-          <div class="text-slate-300">自動壓縮參數並產生短網址，超過 24 小時自動鎖定失效，保障報價權益。</div>
+          <div class="font-extrabold text-sm text-indigo-200">💼 業務端流程：填妥車型、車價與配件後，一鍵產生真正的超短網址傳給客戶！</div>
+          <div class="text-slate-300">自動轉換為 is.gd / v.gd 短連結並附帶 24 小時效期保護，貼到 LINE 絕不截斷。</div>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-2 w-full sm:w-auto shrink-0">
           <button type="button" onclick="window.openShareModal()" class="w-full sm:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl shadow-lg text-sm transition">
-            🔗 產生客戶簽署連結 (24hr 效期)
+            🔗 產生客戶簽署短連結 (24hr 效期)
           </button>
           <button type="button" onclick="window.switchViewMode('a4')" class="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition">
             📄 預覽單張 A4
@@ -911,7 +911,7 @@
 
   </main>
 
-  <!-- ==================== 產生客戶專屬簽署連結 彈出視窗 ==================== -->
+  <!-- ==================== 產生客戶專屬簽署短網址 彈出視窗 ==================== -->
   <div id="shareModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4 no-print overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 space-y-4 my-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -945,19 +945,36 @@
         </div>
       </div>
 
-      <div class="space-y-1.5">
-        <div class="flex items-center justify-between">
-          <label class="block text-xs font-bold text-slate-700">LINE 邀請訊息與專屬短網址（含防竄改效期簽章）：</label>
-          <span id="shortUrlStatus" class="text-[11px] font-bold text-emerald-600">⚡ 已啟用極簡壓縮參數</span>
+      <!-- 專屬短網址獨立高亮顯示區 -->
+      <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-3 space-y-2">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <span class="text-xs font-black text-emerald-900">🔗 專屬短網址</span>
+          <span id="shortUrlStatus" class="text-[11px] font-bold text-amber-700">⏳ 正在產生短網址（免擔心 LINE 截斷）...</span>
         </div>
+        <div class="flex items-center gap-2">
+          <input type="text" id="shortUrlDisplay" readonly value="正在縮短網址中..." class="flex-1 bg-white border border-emerald-300 rounded-lg px-3 py-2 text-sm font-mono font-black text-emerald-700 outline-none select-all">
+          <button type="button" id="btnRetryShorten" onclick="window.refreshShareModalLink()" title="重新產生短網址" class="shrink-0 px-2.5 py-2 bg-white hover:bg-emerald-100 border border-emerald-300 rounded-lg text-xs font-bold text-emerald-800 transition">
+            🔄 重新縮短
+          </button>
+          <button type="button" id="btnCopyShortOnly" onclick="window.copyShortUrlOnly()" class="shrink-0 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-sm transition">
+            📋 僅複製短網址
+          </button>
+        </div>
+        <p id="sandboxBaseUrlNote" class="hidden text-[11px] text-emerald-800 font-semibold">
+          ℹ️ 偵測到目前為預覽模式，已自動對應正式網址 subarudms.github.io/suzuki-contract/，確保手機可直接開啟！
+        </p>
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-xs font-bold text-slate-700">LINE 邀請訊息與專屬短網址（已自動帶入上方短網址）：</label>
         <textarea id="shareMessageText" rows="6" readonly class="w-full border border-slate-300 rounded-xl p-2.5 text-xs font-mono bg-slate-50 text-slate-700 resize-none"></textarea>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-        <button type="button" onclick="window.copyShareMessage()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow transition">
-          📋 複製訊息與連結 (貼至 LINE)
+        <button type="button" id="btnCopyFullMsg" onclick="window.copyShareMessage()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow transition disabled:opacity-50">
+          📋 複製完整 LINE 訊息與短網址
         </button>
-        <button type="button" onclick="window.nativeShareOrder()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow transition">
+        <button type="button" id="btnNativeShare" onclick="window.nativeShareOrder()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow transition disabled:opacity-50">
           📲 呼叫手機分享傳送 LINE
         </button>
       </div>
@@ -987,7 +1004,7 @@
       <div id="a4-contract-sheet">
 
         <!-- 1. 契約書頂部大標題與資料編號框 -->
-        <div class="flex items-end justify-between mb-1" style="padding-right: 6mm;">
+        <div class="flex items-end justify-between mb-1" style="padding-right: 6.2mm;">
           <div class="w-28"></div>
           <div class="text-center tracking-[0.25em] font-black" style="font-size: 18pt; line-height: 1.05;">
             勁順汽車　汽車買賣契約書
@@ -1306,7 +1323,7 @@
         </div>
 
         <!-- 3. 底部買賣雙方簽署區與中華民國日期 -->
-        <div class="pt-1" style="padding-right: 6mm; font-size: 8.1pt; line-height: 1.22;">
+        <div class="pt-1" style="padding-right: 6.2mm; font-size: 8.1pt; line-height: 1.22;">
           <div class="font-bold">
             買受人茲聲明，其已被給予三天以上之期間審閱本契約之內容，並同意以上所有之約款。<br>
             本契約書一式四份，由買受人執一份，出賣人執二份及出賣人之銷售業務代表執一份為憑。
@@ -1338,7 +1355,7 @@
           </div>
 
           <div id="a4-rocDate" class="text-center font-bold tracking-[0.35em] pt-0.5" style="font-size: 8.8pt;">
-            中 華 民 國 115 年 11 月 18 日
+            中 華 民 國 115 年 11 月 21 日
           </div>
         </div>
 
@@ -1347,6 +1364,8 @@
   </div>
 
   <script>
+    const LIVE_GITHUB_PAGES_URL = 'https://subarudms.github.io/suzuki-contract/';
+
     const BRANCH_CODES = ['民族所', '鳳山所', '大中所', '屏東所'];
     const BRANCH_DEFAULTS = {
       '民族所': { address: '高雄市三民區民族一路400號', phone: '07-3822807', delivery: '勁順汽車 民族營業所 (高雄市三民區民族一路400號)' },
@@ -1378,6 +1397,7 @@
     let currentLinkExpiryEpochSec = 0;
     let expiryCountdownTimer = null;
     let isOrderExpiredLocked = false;
+    let activeShareRequestId = 0;
 
     function setElText(id, text) {
       const el = document.getElementById(id);
@@ -1392,6 +1412,27 @@
     function setElVal(id, val) {
       const el = document.getElementById(id);
       if (el && val !== undefined && val !== null) el.value = val;
+    }
+
+    /* 安全的剪貼簿複製（相容 iFrame 與手機瀏覽器） */
+    function copyTextToClipboard(text) {
+      try {
+        const tempArea = document.createElement('textarea');
+        tempArea.value = text;
+        tempArea.setAttribute('readonly', '');
+        tempArea.style.position = 'fixed';
+        tempArea.style.top = '-9999px';
+        tempArea.style.left = '-9999px';
+        document.body.appendChild(tempArea);
+        tempArea.focus();
+        tempArea.select();
+        tempArea.setSelectionRange(0, text.length);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(tempArea);
+        return ok;
+      } catch (e) {
+        return false;
+      }
     }
 
     window.showToast = function(msg, bgClass = 'bg-blue-600') {
@@ -1806,8 +1847,8 @@
     };
 
     /* ==================== 24 小時連結效期與防竄改簽章機制 ==================== */
-    function computeOrderSignature(expBase36, priceStr, modelIdxOrName, branchIdxStr) {
-      const raw = `JS2026|${expBase36}|${priceStr || '0'}|${modelIdxOrName || ''}|${branchIdxStr || '0'}|SUZUKI`;
+    function computeOrderSignature(expBase36, priceStr, docNoStr, modelIdxOrName, branchIdxStr) {
+      const raw = `JS2026|${expBase36}|${priceStr || '0'}|${docNoStr || ''}|${modelIdxOrName || ''}|${branchIdxStr || '0'}|SUZUKI`;
       let h = 2166136261;
       for (let i = 0; i < raw.length; i++) {
         h ^= raw.charCodeAt(i);
@@ -1922,8 +1963,118 @@
       const headerBadge = document.getElementById('headerExpiryBadge');
       if (headerBadge) headerBadge.classList.add('hidden');
       window.setWorkflowMode('sales');
-      window.showToast('🔓 已由業務端解鎖！您可重新產生新的 24 小時有效連結。', 'bg-emerald-600');
+      window.showToast('🔓 已由業務端解鎖！您可重新產生新的 24 小時有效短網址。', 'bg-emerald-600');
     };
+
+    /* ==================== 多層備援短網址引擎（JSONP 繞過 CORS 封鎖） ==================== */
+    function jsonpShorten(endpointBase, longUrl, timeoutMs = 6000) {
+      return new Promise((resolve, reject) => {
+        const cbName = '__jsShortCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+        let finished = false;
+        const script = document.createElement('script');
+
+        function cleanup() {
+          if (script.parentNode) script.parentNode.removeChild(script);
+          try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+        }
+
+        const timer = setTimeout(() => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          reject(new Error('JSONP timeout'));
+        }, timeoutMs);
+
+        window[cbName] = function(data) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          cleanup();
+          if (data && data.shorturl && /^https?:\/\//i.test(data.shorturl)) {
+            resolve(data.shorturl);
+          } else {
+            reject(new Error((data && data.errormessage) || 'Invalid shorturl response'));
+          }
+        };
+
+        script.onerror = function() {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          cleanup();
+          reject(new Error('Script load error'));
+        };
+
+        script.src = `${endpointBase}?format=json&url=${encodeURIComponent(longUrl)}&callback=${cbName}`;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function fetchTextWithTimeout(url, timeoutMs = 5000) {
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+      try {
+        const res = await fetch(url, controller ? { signal: controller.signal } : {});
+        if (timer) clearTimeout(timer);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return (await res.text()).trim();
+      } catch (e) {
+        if (timer) clearTimeout(timer);
+        throw e;
+      }
+    }
+
+    async function shortenUrl(longUrl) {
+      // Tier 1: is.gd via JSONP (bypasses CORS completely on GitHub Pages / iOS Safari / Chrome)
+      try {
+        const shortUrl = await jsonpShorten('https://is.gd/create.php', longUrl, 6000);
+        return { url: shortUrl, provider: 'is.gd', shortened: true };
+      } catch (e1) {}
+
+      // Tier 2: v.gd via JSONP (bypasses CORS completely)
+      try {
+        const shortUrl = await jsonpShorten('https://v.gd/create.php', longUrl, 6000);
+        return { url: shortUrl, provider: 'v.gd', shortened: true };
+      } catch (e2) {}
+
+      // Tier 3a: clck.ru via fetch
+      try {
+        const text = await fetchTextWithTimeout(`https://clck.ru/--?url=${encodeURIComponent(longUrl)}`, 5000);
+        if (/^https?:\/\//i.test(text)) {
+          return { url: text, provider: 'clck.ru', shortened: true };
+        }
+      } catch (e3) {}
+
+      // Tier 3b: tinyurl via fetch
+      try {
+        const text = await fetchTextWithTimeout(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`, 5000);
+        if (/^https?:\/\//i.test(text)) {
+          return { url: text, provider: 'tinyurl', shortened: true };
+        }
+      } catch (e4) {}
+
+      return { url: longUrl, provider: '', shortened: false };
+    }
+
+    /* 判斷是否位於預覽沙盒 / 本機，自動對應正式 GitHub Pages 網址 */
+    function resolveShareBaseUrl() {
+      const proto = window.location.protocol || '';
+      const host = window.location.hostname || '';
+      const href = window.location.href || '';
+      const isSandbox =
+        proto === 'file:' ||
+        proto === 'blob:' ||
+        proto === 'about:' ||
+        !host ||
+        host === 'localhost' ||
+        host === '127.0.0.1' ||
+        href.includes('srcdoc');
+
+      if (isSandbox) {
+        return { baseUrl: LIVE_GITHUB_PAGES_URL, usedSandboxFallback: true };
+      }
+      return { baseUrl: href.split('?')[0].split('#')[0], usedSandboxFallback: false };
+    }
 
     /* ==================== 極簡 URL 壓縮編碼與解碼（不會被 LINE 截斷 + 24hr 效期） ==================== */
     function buildCompactShareUrl(expiryHours = 24) {
@@ -1955,7 +2106,8 @@
       if (getRadioVal('depositType') !== '現金') params.set('dt', getRadioVal('depositType'));
       if (getRadioVal('balanceType') !== '現金支付') params.set('bt', getRadioVal('balanceType'));
 
-      if (getElVal('docNo')) params.set('dn', getElVal('docNo'));
+      const docNoStr = getElVal('docNo') || '';
+      if (docNoStr) params.set('dn', docNoStr);
       if (getElVal('deliveryDate')) params.set('dd', getElVal('deliveryDate'));
       if (getElVal('salesRepName')) params.set('sr', getElVal('salesRepName'));
       if (getElVal('sellerRep')) params.set('rp', getElVal('sellerRep'));
@@ -1993,15 +2145,16 @@
       if (expiryHours > 0) {
         expEpochSec = Math.floor(Date.now() / 1000) + Math.round(expiryHours * 3600);
         const expBase36 = expEpochSec.toString(36);
-        const sig = computeOrderSignature(expBase36, priceStr, modelIdentifier, String(bIdx));
+        const sig = computeOrderSignature(expBase36, priceStr, docNoStr, modelIdentifier, String(bIdx));
         params.set('exp', expBase36);
         params.set('k', sig);
       }
 
-      const baseUrl = window.location.href.split('?')[0].split('#')[0];
+      const { baseUrl, usedSandboxFallback } = resolveShareBaseUrl();
       return {
         url: `${baseUrl}?${params.toString()}`,
-        expEpochSec
+        expEpochSec,
+        usedSandboxFallback
       };
     }
 
@@ -2086,8 +2239,9 @@
           const expEpochSec = parseInt(expBase36, 36);
           const providedSig = params.get('k') || '';
           const priceStr = params.get('p') || getElVal('vehiclePrice') || '0';
+          const docNoStr = params.get('dn') || '';
           const modelId = params.has('v') ? params.get('v') : (params.get('cm') || '');
-          const expectedSig = computeOrderSignature(expBase36, priceStr, modelId, bIdxStr);
+          const expectedSig = computeOrderSignature(expBase36, priceStr, docNoStr, modelId, bIdxStr);
 
           if (!expEpochSec || isNaN(expEpochSec) || (providedSig && providedSig !== expectedSig)) {
             window.showExpiredLockScreen(0, 'tampered');
@@ -2116,9 +2270,10 @@
     };
 
     window.refreshShareModalLink = async function() {
+      const reqId = ++activeShareRequestId;
       const hoursSelect = document.getElementById('linkExpiryHoursSelect');
       const expiryHours = hoursSelect ? parseInt(hoursSelect.value, 10) : 24;
-      const { url: longUrl, expEpochSec } = buildCompactShareUrl(expiryHours);
+      const { url: longUrl, expEpochSec, usedSandboxFallback } = buildCompactShareUrl(expiryHours);
 
       const model = `${getElVal('carModel') || 'SUZUKI'} ${getElVal('carStyle') || ''}`.trim();
       const color = getElVal('carColor') || '指定車色';
@@ -2131,6 +2286,9 @@
 
       setElText('shareExpiryPreviewText', `有效期限至：${expiryText}`);
 
+      const sandboxNoteEl = document.getElementById('sandboxBaseUrlNote');
+      if (sandboxNoteEl) sandboxNoteEl.classList.toggle('hidden', !usedSandboxFallback);
+
       document.getElementById('shareModalSummary').innerHTML = `
         <div>• <strong>服務據點 / 業代：</strong>${currentBranch} / ${sales}</div>
         <div>• <strong>訂購車型 / 車色：</strong>${model} (${color})</div>
@@ -2139,7 +2297,11 @@
       `;
 
       const statusEl = document.getElementById('shortUrlStatus');
+      const shortDisplayEl = document.getElementById('shortUrlDisplay');
       const msgBox = document.getElementById('shareMessageText');
+      const btnCopyFull = document.getElementById('btnCopyFullMsg');
+      const btnNative = document.getElementById('btnNativeShare');
+      const btnCopyShort = document.getElementById('btnCopyShortOnly');
 
       const buildMsg = (targetUrl) => {
         const expNotice = expEpochSec > 0
@@ -2148,22 +2310,33 @@
         return `【勁順汽車 SUZUKI 購車契約確認】\n貴賓 您好，我是勁順汽車 (${currentBranch}) 業務代表 ${sales}。\n您訂購的「${model} (${color})」車價與配件明細已建立，請點擊以下專屬連結檢視訂單內容、填寫買受人基本資料並完成電子簽名：${expNotice}\n\n${targetUrl}`;
       };
 
+      // Loading 狀態
+      statusEl.className = 'text-[11px] font-bold text-amber-700';
+      statusEl.textContent = '⏳ 正在產生短網址（免擔心 LINE 截斷）...';
+      if (shortDisplayEl) shortDisplayEl.value = '正在轉換為超短網址...';
       msgBox.value = buildMsg(longUrl);
-      statusEl.textContent = '⏳ 正在自動縮短網址...';
+      if (btnCopyFull) btnCopyFull.disabled = true;
+      if (btnNative) btnNative.disabled = true;
+      if (btnCopyShort) btnCopyShort.disabled = true;
 
-      try {
-        const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-        if (res.ok) {
-          const tinyUrl = (await res.text()).trim();
-          if (tinyUrl.startsWith('http')) {
-            msgBox.value = buildMsg(tinyUrl);
-            statusEl.textContent = '✅ 已轉換為 24hr 限時超短網址 (100% 防截斷)';
-            return;
-          }
-        }
-      } catch (e) {}
+      const result = await shortenUrl(longUrl);
+      // 若使用者在這期間已切換效期或重新點擊，捨棄舊請求結果
+      if (reqId !== activeShareRequestId) return;
 
-      statusEl.textContent = '⚡ 已啟用 24hr 限時防截斷安全連結格式';
+      if (btnCopyFull) btnCopyFull.disabled = false;
+      if (btnNative) btnNative.disabled = false;
+      if (btnCopyShort) btnCopyShort.disabled = false;
+
+      if (shortDisplayEl) shortDisplayEl.value = result.url;
+      msgBox.value = buildMsg(result.url);
+
+      if (result.shortened) {
+        statusEl.className = 'text-[11px] font-bold text-emerald-700';
+        statusEl.textContent = `✅ 已產生短網址（${result.provider}）｜LINE 點擊 100% 完整`;
+      } else {
+        statusEl.className = 'text-[11px] font-bold text-slate-600';
+        statusEl.textContent = '⚡ 網路限制：已改用防截斷安全連結格式（可按🔄重試）';
+      }
     };
 
     window.closeShareModal = function() {
@@ -2172,15 +2345,24 @@
       modal.classList.remove('flex');
     };
 
+    window.copyShortUrlOnly = function() {
+      const shortVal = getElVal('shortUrlDisplay').trim();
+      if (!shortVal || !shortVal.startsWith('http')) {
+        window.showToast('⏳ 短網址尚未產生完成，請稍候再點選複製。', 'bg-amber-600');
+        return;
+      }
+      copyTextToClipboard(shortVal);
+      window.showToast(`✅ 已複製專屬短網址：${shortVal}`, 'bg-emerald-600');
+    };
+
     window.copyShareMessage = function() {
-      const textEl = document.getElementById('shareMessageText');
-      textEl.select();
-      document.execCommand('copy');
-      window.showToast('✅ 已複製邀請訊息與 24hr 限時短網址！請直接貼到客戶 LINE。', 'bg-emerald-600');
+      const msgVal = getElVal('shareMessageText');
+      copyTextToClipboard(msgVal);
+      window.showToast('✅ 已複製完整 LINE 邀請訊息與短網址！請直接貼給客戶。', 'bg-emerald-600');
     };
 
     window.nativeShareOrder = function() {
-      const msg = document.getElementById('shareMessageText').value;
+      const msg = getElVal('shareMessageText');
       if (navigator.share) {
         navigator.share({ title: '勁順汽車 購車契約確認', text: msg }).catch(() => {});
       } else {
